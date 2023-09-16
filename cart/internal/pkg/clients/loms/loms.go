@@ -2,6 +2,7 @@ package loms
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -33,7 +34,7 @@ func New(name string, basePath string) (*Client, error) {
 	}, nil
 }
 
-func (c Client) GetStocks(sku uint32) (uint64, error) {
+func (c Client) GetStocks(ctx context.Context, sku uint32) (uint64, error) {
 	request := StocksRequest{
 		SKU: sku,
 	}
@@ -41,7 +42,7 @@ func (c Client) GetStocks(sku uint32) (uint64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("%s: failed to encode request %w", c.name, err)
 	}
-	httpRequest, err := http.NewRequest(http.MethodPost, c.path, bytes.NewBuffer(data))
+	httpRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, c.path, bytes.NewBuffer(data))
 	if err != nil {
 		return 0, fmt.Errorf("%s: failed to create HTTP request: %w", c.name, err)
 	}

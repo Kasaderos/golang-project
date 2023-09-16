@@ -1,6 +1,7 @@
 package item
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -34,7 +35,7 @@ type AddRequest struct {
 }
 
 type Adder interface {
-	Add(user int64, sku uint32, count uint16) error
+	Add(ctx context.Context, user int64, sku uint32, count uint16) error
 }
 
 type AddHandler struct {
@@ -60,7 +61,7 @@ func (h AddHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.s.Add(req.User, req.SKU, req.Count); err != nil {
+	if err := h.s.Add(r.Context(), req.User, req.SKU, req.Count); err != nil {
 		handlers.GetErrorResponse(w, h.name, err, http.StatusInternalServerError)
 		return
 	}
