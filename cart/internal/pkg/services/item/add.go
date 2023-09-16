@@ -1,5 +1,7 @@
 package item
 
+import "errors"
+
 type StocksProvider interface {
 	GetStocks(sku uint32) (uint64, error)
 }
@@ -20,9 +22,18 @@ func NewAddService(stocksProvider StocksProvider, productProvider ProductProvide
 	}
 }
 
+var ErrInsufficientStocks = errors.New("Insufficient stocks")
+
 func (s AddService) Add(user int64, sku uint32, count uint16) error {
 	if _, _, err := s.productProvider.GetProductInfo(sku); err != nil {
 		return err
+	}
+	stocksCount, err := s.stocksProvider.GetStocks(sku)
+	if err != nil {
+		return err
+	}
+	if uint64(count) > stocksCount {
+		return ErrInsufficientStocks
 	}
 	return nil
 }

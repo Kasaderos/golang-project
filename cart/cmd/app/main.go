@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	lomsClient, err := loms.New("loms client", "")
+	lomsClient, err := loms.New("loms client", "http://loms:8080")
 	if err != nil {
 		log.Fatal(err)
 	}
