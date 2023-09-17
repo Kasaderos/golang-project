@@ -1,0 +1,102 @@
+package order
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"net/http"
+	"route256/loms/internal/pkg/handlers"
+	"route256/loms/internal/pkg/models"
+)
+
+// var ErrNoItems = errors.New("no items")
+var ErrIncorrectOrderID = errors.New("incorrect order id")
+
+type InfoReq struct {
+	OrderID int64 `json:"order_id,omitempty"`
+}
+
+func (r InfoReq) Validate() error {
+	if r.OrderID <= 0 {
+		return ErrIncorrectOrderID
+	}
+	// todo
+	// check if it exists
+
+	return nil
+}
+
+type InfoResp struct {
+	// Status can be (new | awaiting payment | failed | payed | cancelled)
+	Status string     `json:"status,omitempty"`
+	User   int64      `json:"user,omitempty"`
+	Items  []InfoItem `json:"items,omitempty"`
+}
+
+type InfoItem struct {
+	SKU   uint32 `json:"sku,omitempty"`
+	Count uint16 `json:"count,omitempty"`
+}
+
+type Informer interface {
+	GetInfo(ctx context.Context, orderID int64) (*models.OrderInfo, error)
+}
+
+type InfoHandler struct {
+	name     string
+	informer Informer
+}
+
+func NewInfoHandler(creator Creator) *CreateHandler {
+	return &CreateHandler{
+		name:    "order info handler",
+		creator: creator,
+	}
+}
+
+func (h InfoHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	var req InfoReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		handlers.GetErrorResponse(w, h.name, err, http.StatusBadRequest)
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		handlers.GetErrorResponse(w, h.name, err, http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	orderInfo, err := h.informer.GetInfo(ctx, req.OrderID)
+	if err != nil {
+		// todo 500
+		handlers.GetErrorResponse(w, h.name, err, http.StatusNotFound)
+		return
+	}
+
+	resp := getResponse(orderInfo)
+	respBytes, err := json.Marshal(resp)
+	if err != nil {
+		handlers.GetErrorResponse(w, h.name, err, http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = w.Write(respBytes)
+
+}
+
+func getResponse(info *models.OrderInfo) *InfoResp {
+	resp := &InfoResp{
+		Status: info.Status,
+		User:   int64(info.UserID),
+		Items:  make([]InfoItem, 0, len(info.Items)),
+	}
+	for _, item := range info.Items {
+		resp.Items = append(resp.Items, InfoItem{
+			SKU:   uint32(item.SKU),
+			Count: item.Count,
+		})
+	}
+
+	return resp
+}

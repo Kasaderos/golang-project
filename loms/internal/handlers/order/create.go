@@ -1,12 +1,13 @@
-package orders
+package order
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
+	"route256/loms/internal/models"
 	"route256/loms/internal/pkg/handlers"
-	"route256/loms/internal/pkg/models"
+	"route256/loms/internal/usecase"
 )
 
 var ErrNoItems = errors.New("no items")
@@ -17,7 +18,7 @@ type CreateReq struct {
 	Items []struct {
 		SKU   uint32 `json:"sku,omitempty"`
 		Count uint16 `json:"count,omitempty"`
-	}
+	} `json:"items,omitempty"`
 }
 
 func (r CreateReq) Validate() error {
@@ -37,7 +38,7 @@ type CreateResp struct {
 }
 
 type Creator interface {
-	Create(ctx context.Context, order *models.Order) (orderID string, err error)
+	Create(ctx context.Context, userID models.UserID, info usecase.CreateOrderInfo) (models.OrderID, error)
 }
 
 type CreateHandler struct {
@@ -52,18 +53,9 @@ func NewCreateHandler(creator Creator) *CreateHandler {
 	}
 }
 
-func extractOrder(req *CreateReq) *models.Order {
-	order := &models.Order{
-		User:  req.User,
-		Items: make([]models.OrderItem, 0, len(req.Items)),
-	}
-	for _, item := range req.Items {
-		order.Items = append(order.Items, models.OrderItem{
-			SKU:   item.SKU,
-			Count: item.Count,
-		})
-	}
-	return order
+func extractOrder(req *CreateReq) (models.UserID, usecase.CreateOrderInfo) {
+	// todo
+	return models.UserID(0), usecase.CreateOrderInfo{}
 }
 
 func (h CreateHandler) Handle(w http.ResponseWriter, r *http.Request) {
@@ -79,17 +71,24 @@ func (h CreateHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	order := extractOrder(&req)
+	userID, info := extractOrder(&req)
 
-	orderID, err := h.creator.Create(ctx, order)
+	orderID, err := h.creator.Create(ctx, userID, info)
 	if err != nil {
-		// todo
-		// check server error (500) using "errors" pkg
 		handlers.GetErrorResponse(w, h.name, err, http.StatusPreconditionFailed)
 		return
 	}
 
-	// w.Write()
-	_ = orderID
+	resp := CreateResp{
+		OrderID: int64(orderID),
+	}
+
+	respBytes, err := json.Marshal(resp)
+	if err != nil {
+		handlers.GetErrorResponse(w, h.name, err, http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = w.Write(respBytes)
 
 }

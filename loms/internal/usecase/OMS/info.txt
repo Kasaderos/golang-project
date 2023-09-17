@@ -1,0 +1,24 @@
+package oms
+
+import (
+	"context"
+	"route256/loms/internal/pkg/models"
+)
+
+type OrderInfoProvider interface {
+	GetOrderInfo(ctx context.Context, orderID int64) (*models.OrderInfo, error)
+}
+
+type OrderInfoService struct {
+	provider OrderInfoProvider
+}
+
+func NewOrderInfoService(provider OrderInfoProvider) *OrderInfoService {
+	return &OrderInfoService{
+		provider: provider,
+	}
+}
+
+func (s *OrderInfoService) GetInfo(ctx context.Context, orderID int64) (*models.OrderInfo, error) {
+	return s.provider.GetOrderInfo(ctx, orderID)
+}
