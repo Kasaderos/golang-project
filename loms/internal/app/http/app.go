@@ -7,37 +7,27 @@ import (
 	controller_http "route256/loms/internal/controller/http"
 	repository "route256/loms/internal/repository/mock"
 
-	// wms "route256/loms/internal/services/WMS"
 	oms "route256/loms/internal/usecase/OMS"
 )
 
-type App struct {
-	config Config
-}
-
-func (a App) Run() {
-	// Repository layer
-	omsRepo := repository.NewOMSRepostiory( /* ... */ )
-
-	// Other external services (adapters) layer
+func Run() {
+	// Repository
+	omsRepo := repository.NewOMSRepostiory()
 	wmsRepo := repository.NewStocksRepostiory()
 
-	// Usecase layer
+	// Usecase
 	omsUsecase := oms.NewOMSUsecase(oms.Deps{
-		WMSRepository: wmsRepo, // todo
+		WMSRepository: wmsRepo,
 		OMSRepository: omsRepo,
 	})
 
-	// Delivery || Gateway || Transport || Controller layer
+	// Controller
 	controller := controller_http.NewController(controller_http.Usecases{
 		OrderManagementSystem: omsUsecase,
 	})
 
 	// Router layer
 	router := controller.NewRouter()
-
-	// Middleware layer
-	// router = middleware.WithHTTPRecoverMiddleware(router)
 
 	// Run service
 	addr := os.Getenv("ADDR")

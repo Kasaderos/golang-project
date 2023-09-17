@@ -27,54 +27,53 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// 0. Decode request
 	var req CreateOrderRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// 1. Validation
-	if err := validateCreateOrderRequest(&req); err != nil {
+	if err := req.validate(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// 2. Transform delivery layer models to Domain/Usecase models
-	orderInfo := extractCreateOrderInfoFromCreateOrderRequest(&req)
+	orderInfo := getCreateOrderInfo(&req)
 
-	// 3. Call usecases
 	orderID, err := c.OrderManagementSystem.CreateOrder(ctx, models.UserID(req.UserID), orderInfo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// 4. Prepare answer
 	resp := CreateOrderResponse{
 		OrderID: int64(orderID),
 	}
 
-	// 5. Decode answer & send response
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// according to the task OK but I think we should return 201
+	// according to the task OK
+	// but I think we should return 201
 	w.WriteHeader(http.StatusOK)
 }
 
-func validateCreateOrderRequest(req *CreateOrderRequest) error {
-	/* your validation logic here */
+func (req *CreateOrderRequest) validate() error {
 	return nil
 }
 
-func extractCreateOrderInfoFromCreateOrderRequest(req *CreateOrderRequest) usecase.CreateOrderInfo {
-	/* your mapping logic here */
-
+func getCreateOrderInfo(req *CreateOrderRequest) usecase.CreateOrderInfo {
 	info := usecase.CreateOrderInfo{
-		/* ... */
+		Items: make([]models.ItemOrderInfo, 0, len(req.Items)),
+	}
+
+	for _, item := range req.Items {
+		info.Items = append(info.Items, models.ItemOrderInfo{
+			SKU:   models.SKU(item.SKU),
+			Count: item.Count,
+		})
 	}
 
 	return info
