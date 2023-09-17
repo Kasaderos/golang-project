@@ -12,6 +12,6 @@ const (
 	StatusNew = iota + 1
 	StatusAwaitingPayment
 	StatusFailed
-	StatusPayed
+	StatusPaid
 	StatusCancelled
 )

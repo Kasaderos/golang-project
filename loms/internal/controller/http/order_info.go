@@ -40,7 +40,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := c.OrderManagementSystem.OrderInfo(
+	order, err := c.OrderManagementSystem.GetOrderInfo(
 		ctx,
 		models.OrderID(req.OrderID),
 	)
@@ -56,8 +56,6 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 func (req *OrderInfoRequest) validate() error {

@@ -20,6 +20,13 @@ func (r *stocksRepository) ReserveStocks(
 	userID models.UserID,
 	items []models.ItemOrderInfo,
 ) error {
+	return nil
+}
 
+func (r *stocksRepository) ReserveRemove(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error {
+	return nil
+}
+
+func (r *stocksRepository) ReserveCancel(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error {
 	return nil
 }

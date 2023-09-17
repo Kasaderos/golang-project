@@ -22,3 +22,11 @@ func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) (mo
 func (r *omsRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error) {
 	return models.Order{}, nil
 }
+
+func (r *omsRepository) SetStatus(ctx context.Context, status models.Status) error {
+	return nil
+}
+
+func (r *omsRepository) CancelOrder(ctx context.Context, orderID models.OrderID) error {
+	return nil
+}

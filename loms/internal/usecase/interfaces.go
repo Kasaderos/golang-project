@@ -11,8 +11,16 @@ type OrderManagementSystem interface {
 		userID models.UserID,
 		info CreateOrderInfo,
 	) (models.OrderID, error)
-	OrderInfo(
+	GetOrderInfo(
 		ctx context.Context,
 		orderID models.OrderID,
 	) (models.Order, error)
+	MarkOrderAsPaid(
+		ctx context.Context,
+		orderID models.OrderID,
+	) error
+	CancelOrder(
+		ctx context.Context,
+		orderID models.OrderID,
+	) error
 }
