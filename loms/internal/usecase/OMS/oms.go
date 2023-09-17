@@ -16,6 +16,7 @@ type (
 	// order management system repository
 	OMSRepository interface {
 		CreateOrder(ctx context.Context, order models.Order) (models.Order, error)
+		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
 	}
 )
 
@@ -57,4 +58,8 @@ func (usc *omsUsecase) CreateOrder(ctx context.Context, userID models.UserID, in
 	}
 
 	return OrderID, nil
+}
+
+func (usc *omsUsecase) OrderInfo(ctx context.Context, orderID models.OrderID) (models.Order, error) {
+	return usc.OMSRepository.GetOrderByID(ctx, orderID)
 }

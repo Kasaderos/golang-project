@@ -16,6 +16,9 @@ func NewOMSRepostiory() *omsRepository {
 }
 
 func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) (models.Order, error) {
+	return models.Order{}, nil
+}
 
+func (r *omsRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error) {
 	return models.Order{}, nil
 }

@@ -11,4 +11,8 @@ type OrderManagementSystem interface {
 		userID models.UserID,
 		info CreateOrderInfo,
 	) (models.OrderID, error)
+	OrderInfo(
+		ctx context.Context,
+		orderID models.OrderID,
+	) (models.Order, error)
 }

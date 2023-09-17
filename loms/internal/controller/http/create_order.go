@@ -38,9 +38,11 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	orderInfo := getCreateOrderInfo(&req)
-
-	orderID, err := c.OrderManagementSystem.CreateOrder(ctx, models.UserID(req.UserID), orderInfo)
+	orderID, err := c.OrderManagementSystem.CreateOrder(
+		ctx,
+		models.UserID(req.UserID),
+		req.createOrderInfo(),
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -64,7 +66,7 @@ func (req *CreateOrderRequest) validate() error {
 	return nil
 }
 
-func getCreateOrderInfo(req *CreateOrderRequest) usecase.CreateOrderInfo {
+func (req *CreateOrderRequest) createOrderInfo() usecase.CreateOrderInfo {
 	info := usecase.CreateOrderInfo{
 		Items: make([]models.ItemOrderInfo, 0, len(req.Items)),
 	}
