@@ -29,7 +29,7 @@ func (c *Controller) OrderPayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.OrderManagementSystem.MarkOrderAsPaid(
+	err := c.OMSUsecase.MarkOrderAsPaid(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

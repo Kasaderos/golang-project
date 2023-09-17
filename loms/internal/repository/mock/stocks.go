@@ -23,10 +23,25 @@ func (r *stocksRepository) ReserveStocks(
 	return nil
 }
 
-func (r *stocksRepository) ReserveRemove(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error {
+func (r *stocksRepository) ReserveRemove(
+	ctx context.Context,
+	userID models.UserID,
+	items []models.ItemOrderInfo,
+) error {
 	return nil
 }
 
-func (r *stocksRepository) ReserveCancel(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error {
+func (r *stocksRepository) ReserveCancel(
+	ctx context.Context,
+	userID models.UserID,
+	items []models.ItemOrderInfo,
+) error {
 	return nil
+}
+
+func (r *stocksRepository) GetStockBySKU(
+	ctx context.Context,
+	SKU models.SKU,
+) (count uint64, err error) {
+	return 0, nil
 }

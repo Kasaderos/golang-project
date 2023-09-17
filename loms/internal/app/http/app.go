@@ -8,6 +8,7 @@ import (
 	repository "route256/loms/internal/repository/mock"
 
 	oms "route256/loms/internal/usecase/OMS"
+	wms "route256/loms/internal/usecase/WMS"
 )
 
 func Run() {
@@ -20,10 +21,15 @@ func Run() {
 		WMSRepository: wmsRepo,
 		OMSRepository: omsRepo,
 	})
+	wmsUsecase := wms.NewWMSUsecase(wms.Deps{
+		WMSRepository: wmsRepo,
+	})
 
 	// Controller
+	// todo add constructor
 	controller := controller_http.NewController(controller_http.Usecases{
-		OrderManagementSystem: omsUsecase,
+		OMSUsecase: omsUsecase,
+		WMSUsecase: wmsUsecase,
 	})
 
 	// Router layer

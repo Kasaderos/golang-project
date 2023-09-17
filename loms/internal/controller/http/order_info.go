@@ -40,7 +40,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := c.OrderManagementSystem.GetOrderInfo(
+	order, err := c.OMSUsecase.GetOrderInfo(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

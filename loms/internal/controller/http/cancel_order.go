@@ -29,7 +29,7 @@ func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := c.OrderManagementSystem.CancelOrder(
+	err := c.OMSUsecase.CancelOrder(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

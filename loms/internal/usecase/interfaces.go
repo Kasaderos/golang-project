@@ -5,6 +5,13 @@ import (
 	"route256/loms/internal/models"
 )
 
+type WarehouseManagementSystem interface {
+	GetStockInfo(
+		ctx context.Context,
+		SKU models.SKU,
+	) (count uint64, err error)
+}
+
 type OrderManagementSystem interface {
 	CreateOrder(
 		ctx context.Context,

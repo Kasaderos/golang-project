@@ -3,7 +3,8 @@ package controller_http
 import "route256/loms/internal/usecase"
 
 type Usecases struct {
-	usecase.OrderManagementSystem
+	OMSUsecase usecase.OrderManagementSystem
+	WMSUsecase usecase.WarehouseManagementSystem
 }
 
 type Controller struct {
