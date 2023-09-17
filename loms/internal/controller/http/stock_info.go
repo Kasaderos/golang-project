@@ -14,7 +14,7 @@ type GetStockInfoResponse struct {
 	Count uint64 `json:"count,omitempty"`
 }
 
-func (c *Controller) GetStockInfoHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) StockInfoHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method != http.MethodPost {
