@@ -15,11 +15,12 @@ type (
 	}
 
 	ProductService interface {
-		GetProductInfo(cxt context.Context, sku uint32) (name string, price uint32, err error)
+		GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
 	}
 
 	LOMSService interface {
-		GetStock(ctx context.Context, sku uint32) (count uint64, err error)
+		CreateOrder(ctx context.Context, userID models.UserID, items []models.CartItem) error
+		GetStock(ctx context.Context, sku models.SKU) (count uint64, err error)
 	}
 )
 
@@ -40,12 +41,12 @@ func NewCartUsecase(d Deps) *cartUsecase {
 }
 
 func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error {
-	_, _, err := usc.ProductService.GetProductInfo(ctx, uint32(sku))
+	_, _, err := usc.ProductService.GetProductInfo(ctx, sku)
 	if err != nil {
 		return err
 	}
 
-	stockCount, err := usc.LOMSService.GetStock(ctx, uint32(sku))
+	stockCount, err := usc.LOMSService.GetStock(ctx, sku)
 	if err != nil {
 		return err
 	}
@@ -71,7 +72,7 @@ func (usc cartUsecase) ListItem(
 	}
 
 	for i, item := range items {
-		name, price, err := usc.ProductService.GetProductInfo(ctx, uint32(item.SKU))
+		name, price, err := usc.ProductService.GetProductInfo(ctx, item.SKU)
 		if err != nil {
 			return 0, nil, err
 		}
@@ -83,6 +84,19 @@ func (usc cartUsecase) ListItem(
 	}
 
 	return totalPrice, items, nil
+}
+
+func (usc cartUsecase) Checkout(ctx context.Context, userID models.UserID) error {
+	items, err := usc.CartRepository.GetItemsByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	if err := usc.LOMSService.CreateOrder(ctx, userID, items); err != nil {
+		return err
+	}
+
+	return usc.CartRepository.DeleteItemsByUserID(ctx, userID)
 }
 
 func (usc cartUsecase) DeleteItem(ctx context.Context, userID models.UserID, sku models.SKU) error {
