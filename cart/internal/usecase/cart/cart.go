@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"route256/cart/internal/models"
+	"route256/cart/internal/usecase"
 )
 
 type (
@@ -33,6 +34,8 @@ type Deps struct {
 type cartUsecase struct {
 	Deps
 }
+
+var _ usecase.CartService = (*cartUsecase)(nil)
 
 func NewCartUsecase(d Deps) *cartUsecase {
 	return &cartUsecase{
