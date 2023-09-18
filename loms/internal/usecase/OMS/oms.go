@@ -20,7 +20,6 @@ type (
 		CreateOrder(ctx context.Context, order models.Order) (models.Order, error)
 		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
 		SetStatus(ctx context.Context, status models.Status) error
-		CancelOrder(ctx context.Context, orderID models.OrderID) error
 	}
 )
 
