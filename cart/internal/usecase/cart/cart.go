@@ -60,22 +60,29 @@ func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku mo
 	})
 }
 
-func (usc cartUsecase) ListItem(ctx context.Context, userID models.UserID, sku models.SKU) error {
-	items, err := usc.CartRepository.GetItemsByUserID(ctx, userID)
+func (usc cartUsecase) ListItem(
+	ctx context.Context,
+	userID models.UserID,
+	sku models.SKU,
+) (totalPrice uint32, items []models.CartItem, err error) {
+	items, err = usc.CartRepository.GetItemsByUserID(ctx, userID)
 	if err != nil {
-		return err
+		return 0, nil, err
 	}
 
-	for _, item := range items {
+	for i, item := range items {
 		name, price, err := usc.ProductService.GetProductInfo(ctx, uint32(item.SKU))
 		if err != nil {
-			return err
+			return 0, nil, err
 		}
-		_ = name
-		_ = price
+
+		items[i].Name = name
+		items[i].Price = price
+
+		totalPrice += price
 	}
-	// add resp
-	return nil
+
+	return totalPrice, items, nil
 }
 
 func (usc cartUsecase) DeleteItem(ctx context.Context, userID models.UserID, sku models.SKU) error {

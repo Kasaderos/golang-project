@@ -8,6 +8,8 @@ type Cart struct {
 type CartItem struct {
 	SKU   SKU
 	Count uint16
+	Name  string
+	Price uint32
 }
 
 type StockItem struct {
