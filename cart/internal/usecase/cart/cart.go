@@ -11,6 +11,9 @@ type (
 	CartRepository interface {
 		AddItem(ctx context.Context, userID models.UserID, item models.CartItem) error
 		GetItemsByUserID(ctx context.Context, userID models.UserID) ([]models.CartItem, error)
+	}
+
+	CartDeleter interface {
 		DeleteItem(ctx context.Context, userID models.UserID, SKU models.SKU) error
 		DeleteItemsByUserID(ctx context.Context, userID models.UserID) error
 	}
@@ -27,6 +30,7 @@ type (
 
 type Deps struct {
 	CartRepository
+	CartDeleter
 	ProductService
 	LOMSService
 }
