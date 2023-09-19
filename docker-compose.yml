@@ -10,13 +10,14 @@ services:
     environment:
       - LOMS_SERVICE_URL="http://loms:8080"
       - PRODUCT_SERVICE_URL="http://route256.pavl.uk:8080"
+      - ADDR=:8080
   loms:
     image: loms
     build: ./loms/
     ports:
       - "8083:8080"
     environment:
-      - ADDR=":8083"
+      - ADDR=:8080
   # notification:
   #   image: notification
   #   build: ./notification

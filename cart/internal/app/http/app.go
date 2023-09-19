@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	controller_http "route256/cart/internal/controller/http"
 	repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/loms"
@@ -22,9 +21,9 @@ func Run() error {
 
 	// Usecase
 	cartUsecase := cart.NewCartUsecase(cart.Deps{
-		CartRepository: cartRepo,
-		LOMSService:    lomsService,
-		ProductService: productService,
+		CartRepository:  cartRepo,
+		LOMSService:     lomsService,
+		ProductInformer: productService,
 	})
 
 	// Controller
@@ -37,7 +36,7 @@ func Run() error {
 
 	// Run service
 	addr := os.Getenv("ADDR")
-	log.Printf("server is listening at %s", addr)
+	log.Printf("cart server is listening at %s", addr)
 
 	return http.ListenAndServe(addr, router)
 }

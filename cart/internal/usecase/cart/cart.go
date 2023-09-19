@@ -9,30 +9,46 @@ import (
 
 type (
 	CartRepository interface {
+		CartItemAdder
+		CartItemDeleter
+		CartItemsProvider
+	}
+
+	LOMSService interface {
+		StockProvider
+		OrderCreator
+	}
+
+	CartItemAdder interface {
 		AddItem(ctx context.Context, userID models.UserID, item models.CartItem) error
+	}
+
+	CartItemsProvider interface {
 		GetItemsByUserID(ctx context.Context, userID models.UserID) ([]models.CartItem, error)
 	}
 
-	CartDeleter interface {
+	CartItemDeleter interface {
 		DeleteItem(ctx context.Context, userID models.UserID, SKU models.SKU) error
 		DeleteItemsByUserID(ctx context.Context, userID models.UserID) error
 	}
 
-	ProductService interface {
+	ProductInformer interface {
 		GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
 	}
 
-	LOMSService interface {
+	OrderCreator interface {
 		CreateOrder(ctx context.Context, userID models.UserID, items []models.CartItem) error
+	}
+
+	StockProvider interface {
 		GetStock(ctx context.Context, sku models.SKU) (count uint64, err error)
 	}
 )
 
 type Deps struct {
 	CartRepository
-	CartDeleter
-	ProductService
 	LOMSService
+	ProductInformer
 }
 
 type cartUsecase struct {
@@ -48,7 +64,7 @@ func NewCartUsecase(d Deps) *cartUsecase {
 }
 
 func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error {
-	_, _, err := usc.ProductService.GetProductInfo(ctx, sku)
+	_, _, err := usc.ProductInformer.GetProductInfo(ctx, sku)
 	if err != nil {
 		return err
 	}
@@ -79,7 +95,7 @@ func (usc cartUsecase) ListItem(
 	}
 
 	for i, item := range items {
-		name, price, err := usc.ProductService.GetProductInfo(ctx, item.SKU)
+		name, price, err := usc.ProductInformer.GetProductInfo(ctx, item.SKU)
 		if err != nil {
 			return 0, nil, err
 		}

@@ -2,11 +2,9 @@ package main
 
 import (
 	"log"
-
-	httpapp "route256/cart/internal/pkg/app/http"
+	httpapp "route256/cart/internal/app/http"
 )
 
 func main() {
-	app := httpapp.NewApp()
-	log.Fatal(app.Run())
+	log.Fatal(httpapp.Run())
 }

@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	controller_http "route256/loms/internal/controller/http"
 	repository "route256/loms/internal/repository/mock"
 	oms "route256/loms/internal/usecase/OMS"
@@ -36,6 +35,6 @@ func Run() error {
 
 	// Run service
 	addr := os.Getenv("ADDR")
-	log.Printf("server is listening at %s", addr)
+	log.Printf("loms server is listening at %s", addr)
 	return http.ListenAndServe(addr, router)
 }

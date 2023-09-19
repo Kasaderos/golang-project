@@ -10,16 +10,40 @@ import (
 type (
 	// warehouse management system repository
 	WMSRepository interface {
+		StocksReserver
+		ReserveRemover
+		ReserveCanceller
+	}
+
+	StocksReserver interface {
 		ReserveStocks(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	}
+
+	ReserveRemover interface {
 		ReserveRemove(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	}
+
+	ReserveCanceller interface {
 		ReserveCancel(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
 	}
 
 	// order management system repository
 	OMSRepository interface {
+		OrderCreator
+		OrderStatusSetter
+		OrderProvider
+	}
+
+	OrderCreator interface {
 		CreateOrder(ctx context.Context, order models.Order) (models.Order, error)
-		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
+	}
+
+	OrderStatusSetter interface {
 		SetStatus(ctx context.Context, status models.Status) error
+	}
+
+	OrderProvider interface {
+		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
 	}
 )
 

@@ -27,7 +27,7 @@ type lomsService struct {
 	httpClient *http.Client
 }
 
-var _ cart.LOMSService = (*lomsService)(nil)
+var _ cart.OrderCreator = (*lomsService)(nil)
 
 func NewLOMSService(baseURL string) *lomsService {
 	return &lomsService{
