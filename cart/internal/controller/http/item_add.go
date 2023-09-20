@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"route256/cart/internal/models"
+	"route256/cart/internal/services/product"
 )
 
 type ItemAddRequest struct {
@@ -20,6 +21,12 @@ func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	productServiceToken := r.Header.Get("X-Product-Service-Token")
+	if len(productServiceToken) < 1 {
+		http.Error(w, "empty product service token", http.StatusBadRequest)
+		return
+	}
+
 	var req ItemAddRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -32,7 +39,7 @@ func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := c.Usecases.AddItem(
-		ctx,
+		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 		models.SKU(req.SKU),
 		req.Count,

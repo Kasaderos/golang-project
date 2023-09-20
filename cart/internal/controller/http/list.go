@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"route256/cart/internal/models"
+	"route256/cart/internal/services/product"
 )
 
 type ListRequest struct {
@@ -30,6 +31,12 @@ func (c *Controller) ListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	productServiceToken := r.Header.Get("X-Product-Service-Token")
+	if len(productServiceToken) < 1 {
+		http.Error(w, "empty product service token", http.StatusBadRequest)
+		return
+	}
+
 	var req ListRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -42,7 +49,7 @@ func (c *Controller) ListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	totalPrice, items, err := c.Usecases.ListItem(
-		ctx,
+		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 	)
 	if err != nil {
