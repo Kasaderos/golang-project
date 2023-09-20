@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +12,9 @@ import (
 )
 
 func Run() error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// Repository
 	omsRepo := repository.NewOMSRepostiory()
 	wmsRepo := repository.NewStocksRepostiory()
@@ -23,6 +27,8 @@ func Run() error {
 	wmsUsecase := wms.NewWMSUsecase(wms.Deps{
 		WMSRepository: wmsRepo,
 	})
+
+	go omsUsecase.CancelNotPaidOrdersBackground(ctx)
 
 	// Controller
 	controller := controller_http.NewController(controller_http.Usecases{

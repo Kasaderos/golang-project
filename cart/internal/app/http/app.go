@@ -21,9 +21,9 @@ func Run() error {
 
 	// Usecase
 	cartUsecase := cart.NewCartUsecase(cart.Deps{
-		CartRepository:  cartRepo,
-		LOMSService:     lomsService,
-		ProductInformer: productService,
+		CartRepository: cartRepo,
+		LOMSService:    lomsService,
+		ProductService: productService,
 	})
 
 	// Controller

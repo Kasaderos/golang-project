@@ -31,7 +31,7 @@ type productService struct {
 	httpClient *http.Client
 }
 
-var _ cart.ProductInformer = (*productService)(nil)
+var _ cart.ProductService = (*productService)(nil)
 
 func NewProductService(baseURL string) *productService {
 	return &productService{

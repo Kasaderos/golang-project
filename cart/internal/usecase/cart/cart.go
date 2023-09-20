@@ -2,7 +2,6 @@ package cart
 
 import (
 	"context"
-	"errors"
 	"route256/cart/internal/models"
 	"route256/cart/internal/usecase"
 )
@@ -14,17 +13,8 @@ type (
 		CartItemsProvider
 	}
 
-	LOMSService interface {
-		StockProvider
-		OrderCreator
-	}
-
 	CartItemAdder interface {
 		AddItem(ctx context.Context, userID models.UserID, item models.CartItem) error
-	}
-
-	CartItemsProvider interface {
-		GetItemsByUserID(ctx context.Context, userID models.UserID) ([]models.CartItem, error)
 	}
 
 	CartItemDeleter interface {
@@ -32,8 +22,13 @@ type (
 		DeleteItemsByUserID(ctx context.Context, userID models.UserID) error
 	}
 
-	ProductInformer interface {
-		GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
+	CartItemsProvider interface {
+		GetItemsByUserID(ctx context.Context, userID models.UserID) ([]models.CartItem, error)
+	}
+
+	LOMSService interface {
+		StockProvider
+		OrderCreator
 	}
 
 	OrderCreator interface {
@@ -43,12 +38,16 @@ type (
 	StockProvider interface {
 		GetStock(ctx context.Context, sku models.SKU) (count uint64, err error)
 	}
+
+	ProductService interface {
+		GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
+	}
 )
 
 type Deps struct {
 	CartRepository
 	LOMSService
-	ProductInformer
+	ProductService
 }
 
 type cartUsecase struct {
@@ -61,75 +60,4 @@ func NewCartUsecase(d Deps) *cartUsecase {
 	return &cartUsecase{
 		Deps: d,
 	}
-}
-
-func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error {
-	_, _, err := usc.ProductInformer.GetProductInfo(ctx, sku)
-	if err != nil {
-		return err
-	}
-
-	stockCount, err := usc.LOMSService.GetStock(ctx, sku)
-	if err != nil {
-		return err
-	}
-
-	if uint64(count) > stockCount {
-		return errors.New("todo")
-	}
-
-	return usc.CartRepository.AddItem(ctx, userID, models.CartItem{
-		SKU:   sku,
-		Count: count,
-	})
-}
-
-func (usc cartUsecase) ListItem(
-	ctx context.Context,
-	userID models.UserID,
-) (totalPrice uint32, items []models.CartItem, err error) {
-	items, err = usc.CartRepository.GetItemsByUserID(ctx, userID)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	for i, item := range items {
-		name, price, err := usc.ProductInformer.GetProductInfo(ctx, item.SKU)
-		if err != nil {
-			return 0, nil, err
-		}
-
-		items[i].Name = name
-		items[i].Price = price
-
-		totalPrice += price
-	}
-
-	return totalPrice, items, nil
-}
-
-func (usc cartUsecase) Checkout(ctx context.Context, userID models.UserID) (models.OrderID, error) {
-	items, err := usc.CartRepository.GetItemsByUserID(ctx, userID)
-	if err != nil {
-		return models.OrderID(0), err
-	}
-
-	orderID, err := usc.LOMSService.CreateOrder(ctx, userID, items)
-	if err != nil {
-		return models.OrderID(0), err
-	}
-
-	if err := usc.CartRepository.DeleteItemsByUserID(ctx, userID); err != nil {
-		return models.OrderID(0), err
-	}
-
-	return orderID, nil
-}
-
-func (usc cartUsecase) DeleteItem(ctx context.Context, userID models.UserID, sku models.SKU) error {
-	return usc.CartRepository.DeleteItem(ctx, userID, sku)
-}
-
-func (usc cartUsecase) Clear(ctx context.Context, userID models.UserID) error {
-	return usc.CartRepository.DeleteItemsByUserID(ctx, userID)
 }
