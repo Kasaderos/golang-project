@@ -30,3 +30,7 @@ func (r *omsRepository) SetStatus(ctx context.Context, status models.Status) err
 func (r *omsRepository) CancelOrder(ctx context.Context, orderID models.OrderID) error {
 	return nil
 }
+
+func (r *omsRepository) ListExpiredOrders(ctx context.Context, limit uint32) ([]models.Order, error) {
+	return nil, nil
+}

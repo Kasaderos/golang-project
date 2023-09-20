@@ -32,6 +32,7 @@ type (
 		OrderCreator
 		OrderStatusSetter
 		OrderProvider
+		ExpiredOrdersProvider
 	}
 
 	OrderCreator interface {
@@ -44,6 +45,10 @@ type (
 
 	OrderProvider interface {
 		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
+	}
+
+	ExpiredOrdersProvider interface {
+		ListExpiredOrders(ctx context.Context, limit uint32) ([]models.Order, error)
 	}
 )
 
