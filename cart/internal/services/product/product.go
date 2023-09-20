@@ -6,11 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"route256/cart/internal/models"
 	"route256/cart/internal/usecase/cart"
 )
+
+type contextKeyType string
+
+const tokenContextKey = contextKeyType("token")
 
 var (
 	ErrOrderNotCreated = errors.New("order not created")
@@ -36,9 +41,21 @@ func NewProductService(baseURL string) *productService {
 	}
 }
 
+func WithToken(ctx context.Context, token string) context.Context {
+	return context.WithValue(ctx, tokenContextKey, token)
+}
+
+func getTokenFromContext(ctx context.Context) string {
+	val, ok := ctx.Value(tokenContextKey).(string)
+	if !ok || len(val) < 1 {
+		log.Println("bad token")
+	}
+	return val
+}
+
 func (c *productService) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
 	reqBody := GetProductRequest{
-		Token: "testtoken", // TODO: get from request and pass into ctx
+		Token: getTokenFromContext(ctx),
 		SKU:   uint32(sku),
 	}
 
