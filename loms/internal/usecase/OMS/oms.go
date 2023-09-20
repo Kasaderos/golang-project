@@ -35,19 +35,19 @@ type (
 	}
 
 	OrderCreator interface {
-		CreateOrder(ctx context.Context, order models.Order) (models.Order, error)
+		CreateOrder(ctx context.Context, order models.Order) error
 	}
 
 	OrderStatusSetter interface {
-		SetStatus(ctx context.Context, status models.Status) error
+		SetStatus(ctx context.Context, orderID models.OrderID, status models.Status) error
 	}
 
 	OrderProvider interface {
-		GetOrderByID(ctx context.Context, orderID models.OrderID) (models.Order, error)
+		GetOrderByID(ctx context.Context, orderID models.OrderID) (*models.Order, error)
 	}
 
 	ExpiredOrdersProvider interface {
-		ListExpiredOrders(ctx context.Context, limit uint32) ([]models.Order, error)
+		ListExpiredOrders(ctx context.Context, limit uint32) ([]models.OrderID, error)
 	}
 )
 

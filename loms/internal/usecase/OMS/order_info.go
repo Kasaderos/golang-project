@@ -8,7 +8,7 @@ import (
 func (usc *omsUsecase) GetOrderInfo(
 	ctx context.Context,
 	orderID models.OrderID,
-) (models.Order, error) {
+) (*models.Order, error) {
 	return usc.OMSRepository.GetOrderByID(ctx, orderID)
 }
 
@@ -25,5 +25,5 @@ func (usc *omsUsecase) MarkOrderAsPaid(
 		return err
 	}
 
-	return usc.OMSRepository.SetStatus(ctx, models.StatusPaid)
+	return usc.OMSRepository.SetStatus(ctx, orderID, models.StatusPaid)
 }

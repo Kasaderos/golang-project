@@ -24,15 +24,15 @@ func (usc omsUsecase) CancelNotPaidOrdersBackground(ctx context.Context) {
 }
 
 func (usc omsUsecase) cancelNotPaidOrders(ctx context.Context) {
-	orders, err := usc.OMSRepository.ListExpiredOrders(ctx, listActiveOrdersLimit)
+	expiredOrderIDs, err := usc.OMSRepository.ListExpiredOrders(ctx, listActiveOrdersLimit)
 	if err != nil {
 		log.Printf("can't list orders: %v", err)
 		return
 	}
 
-	for _, order := range orders {
-		if err = usc.CancelOrder(ctx, order.ID); err != nil {
-			log.Printf("while cancelling expired order: order_id %v: %v", order.ID, err)
+	for _, id := range expiredOrderIDs {
+		if err = usc.CancelOrder(ctx, id); err != nil {
+			log.Printf("while cancelling expired order: order_id %v: %v", id, err)
 		}
 	}
 }

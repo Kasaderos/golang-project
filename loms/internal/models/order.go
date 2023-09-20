@@ -3,7 +3,7 @@ package models
 type Order struct {
 	ID     OrderID
 	UserID UserID
-	Status string
+	Status Status
 	Items  []ItemOrderInfo
 }
 

@@ -32,7 +32,7 @@ type (
 		GetOrderInfo(
 			ctx context.Context,
 			orderID models.OrderID,
-		) (models.Order, error)
+		) (*models.Order, error)
 	}
 
 	OrderAsPaidMarker interface {

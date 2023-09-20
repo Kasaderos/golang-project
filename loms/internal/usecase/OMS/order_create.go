@@ -21,13 +21,11 @@ func (usc *omsUsecase) CreateOrder(
 		}
 	)
 
-	_, err := usc.OMSRepository.CreateOrder(ctx, order)
-	if err != nil {
+	if err := usc.OMSRepository.CreateOrder(ctx, order); err != nil {
 		return models.OrderID(-1), err
 	}
 
-	err = usc.WMSRepository.ReserveStocks(ctx, userID, info.Items)
-	if err != nil {
+	if err := usc.WMSRepository.ReserveStocks(ctx, userID, info.Items); err != nil {
 		return models.OrderID(-1), err
 	}
 

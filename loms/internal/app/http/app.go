@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	controller_http "route256/loms/internal/controller/http"
-	repository "route256/loms/internal/repository/mock"
+	repository "route256/loms/internal/repository/memory"
 	oms "route256/loms/internal/usecase/OMS"
 	wms "route256/loms/internal/usecase/WMS"
 )
