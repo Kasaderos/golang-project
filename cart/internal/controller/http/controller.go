@@ -1,4 +1,4 @@
-package http
+package controller_http
 
 import "route256/cart/internal/usecase"
 
