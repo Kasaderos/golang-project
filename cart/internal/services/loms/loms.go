@@ -37,7 +37,11 @@ func NewLOMSService(baseURL string) *lomsService {
 	}
 }
 
-func (srv *lomsService) CreateOrder(ctx context.Context, userID models.UserID, items []models.CartItem) error {
+func (srv *lomsService) CreateOrder(
+	ctx context.Context,
+	userID models.UserID,
+	items []models.CartItem,
+) (models.OrderID, error) {
 	body := CreateOrderRequest{
 		UserID: int64(userID),
 		Items:  make([]CreateOrderItem, 0, len(items)),
@@ -51,22 +55,22 @@ func (srv *lomsService) CreateOrder(ctx context.Context, userID models.UserID, i
 
 	reqBody, err := json.Marshal(body)
 	if err != nil {
-		return err
+		return models.OrderID(0), err
 	}
 
 	reqURL, err := url.JoinPath(srv.baseURL, CreateOrderAPIPath)
 	if err != nil {
-		return err
+		return models.OrderID(0), err
 	}
 
 	req, err := http.NewRequest(http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
 	if err != nil {
-		return err
+		return models.OrderID(0), err
 	}
 
 	resp, err := srv.httpClient.Do(req)
 	if err != nil {
-		return err
+		return models.OrderID(0), err
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -75,12 +79,17 @@ func (srv *lomsService) CreateOrder(ctx context.Context, userID models.UserID, i
 	if resp.StatusCode != 200 {
 		var response CreateOrderErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			return err
+			return models.OrderID(0), err
 		}
-		return fmt.Errorf("%s: responded with: %s", srv.name, response.Message)
+		return models.OrderID(0), fmt.Errorf("%s: responded with: %s", srv.name, response.Message)
 	}
 
-	return nil
+	var respSt CreateOrderResponse
+	if err := json.NewDecoder(resp.Body).Decode(&resp); err != nil {
+		return models.OrderID(0), fmt.Errorf("%s: decode: %w", srv.name, err)
+	}
+
+	return models.OrderID(respSt.OrderID), nil
 }
 
 func (srv *lomsService) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {

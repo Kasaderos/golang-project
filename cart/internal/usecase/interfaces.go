@@ -10,9 +10,8 @@ type CartService interface {
 	ListItem(
 		ctx context.Context,
 		userID models.UserID,
-		sku models.SKU,
 	) (totalPrice uint32, items []models.CartItem, err error)
-	Checkout(ctx context.Context, userID models.UserID) error
+	Checkout(ctx context.Context, userID models.UserID) (models.OrderID, error)
 	DeleteItem(ctx context.Context, userID models.UserID, sku models.SKU) error
 	Clear(ctx context.Context, userID models.UserID) error
 }

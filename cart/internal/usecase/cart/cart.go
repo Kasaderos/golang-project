@@ -37,7 +37,7 @@ type (
 	}
 
 	OrderCreator interface {
-		CreateOrder(ctx context.Context, userID models.UserID, items []models.CartItem) error
+		CreateOrder(ctx context.Context, userID models.UserID, items []models.CartItem) (models.OrderID, error)
 	}
 
 	StockProvider interface {
@@ -87,7 +87,6 @@ func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku mo
 func (usc cartUsecase) ListItem(
 	ctx context.Context,
 	userID models.UserID,
-	sku models.SKU,
 ) (totalPrice uint32, items []models.CartItem, err error) {
 	items, err = usc.CartRepository.GetItemsByUserID(ctx, userID)
 	if err != nil {
@@ -109,17 +108,22 @@ func (usc cartUsecase) ListItem(
 	return totalPrice, items, nil
 }
 
-func (usc cartUsecase) Checkout(ctx context.Context, userID models.UserID) error {
+func (usc cartUsecase) Checkout(ctx context.Context, userID models.UserID) (models.OrderID, error) {
 	items, err := usc.CartRepository.GetItemsByUserID(ctx, userID)
 	if err != nil {
-		return err
+		return models.OrderID(0), err
 	}
 
-	if err := usc.LOMSService.CreateOrder(ctx, userID, items); err != nil {
-		return err
+	orderID, err := usc.LOMSService.CreateOrder(ctx, userID, items)
+	if err != nil {
+		return models.OrderID(0), err
 	}
 
-	return usc.CartRepository.DeleteItemsByUserID(ctx, userID)
+	if err := usc.CartRepository.DeleteItemsByUserID(ctx, userID); err != nil {
+		return models.OrderID(0), err
+	}
+
+	return orderID, nil
 }
 
 func (usc cartUsecase) DeleteItem(ctx context.Context, userID models.UserID, sku models.SKU) error {
