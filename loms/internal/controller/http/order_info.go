@@ -63,6 +63,10 @@ func (req *OrderInfoRequest) validate() error {
 }
 
 func (resp *OrderInfoResponse) Fill(order *models.Order) {
+	if order == nil {
+		return
+	}
+
 	resp.Status = order.Status.String()
 	resp.User = int64(order.UserID)
 	resp.Items = make([]OrderInfoItem, 0, len(order.Items))
