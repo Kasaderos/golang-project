@@ -50,7 +50,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := new(OrderInfoResponse)
-	resp.Fill(&order)
+	resp.Fill(order)
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

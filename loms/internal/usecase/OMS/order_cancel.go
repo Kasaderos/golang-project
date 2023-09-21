@@ -18,5 +18,5 @@ func (usc *omsUsecase) CancelOrder(
 		return err
 	}
 
-	return usc.OMSRepository.SetStatus(ctx, models.StatusCancelled)
+	return usc.OMSRepository.SetStatus(ctx, orderID, models.StatusCancelled)
 }
