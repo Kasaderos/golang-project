@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	controller_http "route256/loms/internal/controller/http"
-	repository "route256/loms/internal/repository/memory"
+	mock_repository "route256/loms/internal/repository/mock"
 	oms "route256/loms/internal/usecase/OMS"
 	wms "route256/loms/internal/usecase/WMS"
 )
@@ -16,8 +16,8 @@ func Run() error {
 	defer cancel()
 
 	// Repository
-	omsRepo := repository.NewOMSRepostiory()
-	wmsRepo := repository.NewStocksRepostiory()
+	omsRepo := mock_repository.NewOMSRepostiory()
+	wmsRepo := mock_repository.NewStocksRepostiory()
 
 	// Usecase
 	omsUsecase := oms.NewOMSUsecase(oms.Deps{

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	controller_http "route256/cart/internal/controller/http"
-	repository "route256/cart/internal/repository/mock"
+	mock_repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/loms"
 	"route256/cart/internal/services/product"
 	"route256/cart/internal/usecase/cart"
@@ -13,7 +13,7 @@ import (
 
 func Run() error {
 	// Repository
-	cartRepo := repository.NewCartRepostiory()
+	cartRepo := mock_repository.NewCartRepostiory()
 
 	// Services
 	lomsService := loms.NewLOMSService(os.Getenv("LOMS_SERVICE_URL"))
