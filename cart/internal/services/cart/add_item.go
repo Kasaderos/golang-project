@@ -46,11 +46,11 @@ func (c AddService) AddItem(ctx context.Context, userID models.UserID, sku model
 
 	stockCount, err := c.stockProvider.GetStock(ctx, sku)
 	if err != nil {
-		return err
+		return fmt.Errorf("get stock: %w", err)
 	}
 
 	if uint64(count) > stockCount {
-		return fmt.Errorf("add item: not enough stocks %d > %d", count, stockCount)
+		return fmt.Errorf("add item: not enough stocks, %d > %d", count, stockCount)
 	}
 
 	return c.itemAdder.AddItem(ctx, userID, models.CartItem{

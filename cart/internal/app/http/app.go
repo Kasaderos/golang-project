@@ -28,7 +28,7 @@ func Run() error {
 	checkoutService := cart.NewCheckoutService(cart.CheckoutDeps{
 		OrderCreator:  lomsClient,
 		ItemsProvider: cartRepo,
-		ItemDeleter:   cartRepo,
+		ItemsDeleter:  cartRepo,
 	})
 	itemDeleteService := cart.NewItemDeleteService(cartRepo)
 	listItemService := cart.NewListItemService(cartRepo, productClient)
