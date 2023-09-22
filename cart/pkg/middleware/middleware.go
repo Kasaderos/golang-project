@@ -1,4 +1,4 @@
-package controller_http
+package middleware
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"runtime/debug"
 )
 
-func MiddlewareRecovery(next http.Handler) http.Handler {
+func Recovery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {

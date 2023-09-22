@@ -2,12 +2,13 @@ package controller_http
 
 import (
 	"net/http"
+	"route256/cart/pkg/middleware"
 )
 
 func (c *Controller) NewRouter() http.Handler {
 	mux := http.NewServeMux()
 
-	handler := MiddlewareRecovery(mux)
+	handler := middleware.Recovery(mux)
 
 	mux.HandleFunc("/order/create", c.OrderCreateHandler)
 	mux.HandleFunc("/order/info", c.OrderInfoHandler)
