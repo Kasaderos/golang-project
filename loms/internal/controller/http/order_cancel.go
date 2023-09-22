@@ -28,11 +28,6 @@ type OrderCancelRequest struct {
 func (c *Controller) OrderCancelHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusNotFound)
-		return
-	}
-
 	var req OrderCancelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

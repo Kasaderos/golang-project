@@ -22,11 +22,6 @@ type GetStockInfoResponse struct {
 func (c *Controller) StockInfoHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusNotFound)
-		return
-	}
-
 	var req GetStockInfoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

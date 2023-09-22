@@ -24,11 +24,6 @@ type ItemAddRequest struct {
 func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusNotFound)
-		return
-	}
-
 	productServiceToken := r.Header.Get("X-Product-Service-Token")
 	if len(productServiceToken) < 1 {
 		http.Error(w, "empty product service token", http.StatusBadRequest)
