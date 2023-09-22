@@ -32,6 +32,7 @@ func Run() error {
 	})
 	itemDeleteService := cart.NewItemDeleteService(cartRepo)
 	listItemService := cart.NewListItemService(cartRepo, productClient)
+	clearService := cart.NewClearService(cartRepo)
 
 	// Controller
 	controller := controller_http.NewController(controller_http.Services{
@@ -39,6 +40,7 @@ func Run() error {
 		CheckoutService:   checkoutService,
 		ItemDeleteService: itemDeleteService,
 		ListItemService:   listItemService,
+		ClearService:      clearService,
 	})
 
 	// Router layer
