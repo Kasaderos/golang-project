@@ -43,5 +43,5 @@ func (r *stocksRepository) GetStockBySKU(
 	ctx context.Context,
 	SKU models.SKU,
 ) (count uint64, err error) {
-	return 0, nil
+	return 100, nil
 }

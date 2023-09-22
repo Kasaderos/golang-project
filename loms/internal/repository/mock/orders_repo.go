@@ -23,7 +23,9 @@ func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) err
 }
 
 func (r *omsRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (*models.Order, error) {
-	return nil, nil
+	return &models.Order{
+		ID: orderID,
+	}, nil
 }
 
 func (r *omsRepository) SetStatus(ctx context.Context, orderID models.OrderID, status models.Status) error {
@@ -31,5 +33,5 @@ func (r *omsRepository) SetStatus(ctx context.Context, orderID models.OrderID, s
 }
 
 func (r *omsRepository) ListExpiredOrders(ctx context.Context, limit uint32) ([]models.OrderID, error) {
-	return nil, nil
+	return []models.OrderID{}, nil
 }

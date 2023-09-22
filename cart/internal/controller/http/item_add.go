@@ -2,10 +2,13 @@ package controller_http
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"route256/cart/internal/models"
 	"route256/cart/internal/services/product"
 )
+
+var ErrCountIsZero = errors.New("count is zero")
 
 type ItemAddRequest struct {
 	User  int64  `json:"user,omitempty"`
@@ -51,5 +54,8 @@ func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (req *ItemAddRequest) validate() error {
+	if req.Count <= 0 {
+		return ErrCountIsZero
+	}
 	return nil
 }

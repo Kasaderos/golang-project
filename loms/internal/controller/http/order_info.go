@@ -49,8 +49,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := new(OrderInfoResponse)
-	resp.Fill(order)
+	resp := toOrderInfoResponse(order)
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -62,10 +61,11 @@ func (req *OrderInfoRequest) validate() error {
 	return nil
 }
 
-func (resp *OrderInfoResponse) Fill(order *models.Order) {
+func toOrderInfoResponse(order *models.Order) *OrderInfoResponse {
 	if order == nil {
-		return
+		return nil
 	}
+	resp := new(OrderInfoResponse)
 
 	resp.Status = order.Status.String()
 	resp.User = int64(order.UserID)
@@ -77,4 +77,6 @@ func (resp *OrderInfoResponse) Fill(order *models.Order) {
 			Count: item.Count,
 		})
 	}
+
+	return resp
 }

@@ -48,18 +48,18 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// according to the task OK
+	// but I think we should return 201
+	w.WriteHeader(http.StatusOK)
+
 	resp := CreateOrderResponse{
 		OrderID: int64(orderID),
 	}
-
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// according to the task OK
-	// but I think we should return 201
-	w.WriteHeader(http.StatusOK)
 }
 
 func (req *CreateOrderRequest) validate() error {

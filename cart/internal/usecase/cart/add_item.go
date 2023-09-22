@@ -2,14 +2,14 @@ package cart
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"route256/cart/internal/models"
 )
 
 func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error {
 	_, _, err := usc.ProductService.GetProductInfo(ctx, sku)
 	if err != nil {
-		return err
+		return fmt.Errorf("product service: %w", err)
 	}
 
 	stockCount, err := usc.LOMSService.GetStock(ctx, sku)
@@ -18,7 +18,7 @@ func (usc cartUsecase) AddItem(ctx context.Context, userID models.UserID, sku mo
 	}
 
 	if uint64(count) > stockCount {
-		return errors.New("todo")
+		return fmt.Errorf("add item: not enough stocks %d > %d", count, stockCount)
 	}
 
 	return usc.CartRepository.AddItem(ctx, userID, models.CartItem{

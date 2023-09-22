@@ -22,7 +22,7 @@ var (
 )
 
 const (
-	GetProductInfoPath = "/product/info"
+	getProductInfoPath = "/get_product"
 )
 
 type productService struct {
@@ -64,9 +64,9 @@ func (c *productService) GetProductInfo(ctx context.Context, sku models.SKU) (na
 		return "", 0, fmt.Errorf("%s: failed to encode request %w", c.name, err)
 	}
 
-	reqURL, err := url.JoinPath(c.baseURL, GetProductInfoPath)
+	reqURL, err := url.JoinPath(c.baseURL, getProductInfoPath)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("%s: join path %w, base '%s' path '%s'", c.name, err, c.baseURL, getProductInfoPath)
 	}
 
 	req, err := http.NewRequest(http.MethodPost, reqURL, bytes.NewBuffer(data))

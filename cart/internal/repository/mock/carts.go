@@ -26,7 +26,7 @@ func (r *cartRepository) GetItemsByUserID(
 	ctx context.Context,
 	userID models.UserID,
 ) ([]models.CartItem, error) {
-	return nil, nil
+	return []models.CartItem{}, nil
 }
 
 func (r *cartRepository) DeleteItem(

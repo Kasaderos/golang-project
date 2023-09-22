@@ -8,8 +8,8 @@ services:
     depends_on:
       - loms
     environment:
-      - LOMS_SERVICE_URL="http://loms:8080"
-      - PRODUCT_SERVICE_URL="http://route256.pavl.uk:8080"
+      - LOMS_SERVICE_URL=http://loms:8080
+      - PRODUCT_SERVICE_URL=http://route256.pavl.uk:8080
       - ADDR=:8080
   loms:
     image: loms
