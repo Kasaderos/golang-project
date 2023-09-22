@@ -1,14 +1,19 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
+	"route256/cart/internal/clients/product"
 	"route256/cart/internal/models"
-	"route256/cart/internal/services/product"
 )
 
 var ErrCountIsZero = errors.New("count is zero")
+
+type ItemAddService interface {
+	AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error
+}
 
 type ItemAddRequest struct {
 	User  int64  `json:"user,omitempty"`
@@ -41,7 +46,7 @@ func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.Usecases.AddItem(
+	err := c.ItemAddService.AddItem(
 		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 		models.SKU(req.SKU),

@@ -1,10 +1,15 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/cart/internal/models"
 )
+
+type ClearService interface {
+	Clear(ctx context.Context, userID models.UserID) error
+}
 
 type ClearRequest struct {
 	User int64 `json:"user,omitempty"`
@@ -29,7 +34,7 @@ func (c *Controller) ClearHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.Usecases.Clear(ctx, models.UserID(req.User))
+	err := c.ClearService.Clear(ctx, models.UserID(req.User))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

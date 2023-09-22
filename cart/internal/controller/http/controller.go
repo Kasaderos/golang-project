@@ -1,17 +1,19 @@
 package controller_http
 
-import "route256/cart/internal/usecase"
+import "route256/cart/internal/services"
 
-type Usecases struct {
-	usecase.CartService
+type Services struct {
+	services.CartService
 }
 
 type Controller struct {
-	Usecases
+	ItemAddService
+	CheckoutService
+	ItemDeleteService
+	ListItemService
+	ClearService
 }
 
-func NewController(us Usecases) *Controller {
-	return &Controller{
-		Usecases: us,
-	}
+func NewController(us Services) *Controller {
+	return &Controller{}
 }

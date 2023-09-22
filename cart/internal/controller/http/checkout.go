@@ -1,10 +1,19 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/cart/internal/models"
 )
+
+type CartService interface {
+	Clear(ctx context.Context, userID models.UserID) error
+}
+
+type CheckoutService interface {
+	Checkout(ctx context.Context, userID models.UserID) (models.OrderID, error)
+}
 
 type CheckoutRequest struct {
 	User int64 `json:"user,omitempty"`
@@ -33,7 +42,7 @@ func (c *Controller) CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderID, err := c.Usecases.Checkout(ctx, models.UserID(req.User))
+	orderID, err := c.CheckoutService.Checkout(ctx, models.UserID(req.User))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

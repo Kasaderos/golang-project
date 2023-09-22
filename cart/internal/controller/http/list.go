@@ -1,11 +1,16 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
+	"route256/cart/internal/clients/product"
 	"route256/cart/internal/models"
-	"route256/cart/internal/services/product"
 )
+
+type ListItemService interface {
+	ListItem(ctx context.Context, userID models.UserID) (totalPrice uint32, items []models.CartItem, err error)
+}
 
 type ListRequest struct {
 	User int64 `json:"user,omitempty"`
@@ -48,7 +53,7 @@ func (c *Controller) ListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	totalPrice, items, err := c.Usecases.ListItem(
+	totalPrice, items, err := c.ListItemService.ListItem(
 		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 	)
