@@ -1,11 +1,16 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/loms/internal/models"
-	"route256/loms/internal/usecase"
+	dto "route256/loms/internal/services"
 )
+
+type OrderCreator interface {
+	CreateOrder(ctx context.Context, userID models.UserID, info dto.CreateOrderInfo) (models.OrderID, error)
+}
 
 type CreateOrderRequest struct {
 	UserID int64 `json:"user"`
@@ -38,7 +43,7 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	orderID, err := c.OMSUsecase.CreateOrder(
+	orderID, err := c.OrderCreator.CreateOrder(
 		ctx,
 		models.UserID(req.UserID),
 		req.CreateOrderInfo(),
@@ -66,8 +71,8 @@ func (req *CreateOrderRequest) validate() error {
 	return nil
 }
 
-func (req *CreateOrderRequest) CreateOrderInfo() usecase.CreateOrderInfo {
-	info := usecase.CreateOrderInfo{
+func (req *CreateOrderRequest) CreateOrderInfo() dto.CreateOrderInfo {
+	info := dto.CreateOrderInfo{
 		Items: make([]models.ItemOrderInfo, 0, len(req.Items)),
 	}
 

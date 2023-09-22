@@ -1,10 +1,25 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/loms/internal/models"
 )
+
+type Stocks interface {
+	GetStockInfo(
+		ctx context.Context,
+		SKU models.SKU,
+	) (count uint64, err error)
+}
+
+type OrderCanceller interface {
+	CancelOrder(
+		ctx context.Context,
+		orderID models.OrderID,
+	) error
+}
 
 type CancelOrderRequest struct {
 	OrderID int64 `json:"orderID,omitempty"`
@@ -29,7 +44,7 @@ func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := c.OMSUsecase.CancelOrder(
+	err := c.OrderCanceller.CancelOrder(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

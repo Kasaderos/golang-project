@@ -1,10 +1,15 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/loms/internal/models"
 )
+
+type OrderInformer interface {
+	GetInfo(ctx context.Context, orderID models.OrderID) (*models.Order, error)
+}
 
 type OrderInfoRequest struct {
 	OrderID int64 `json:"orderID,omitempty"`
@@ -40,7 +45,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := c.OMSUsecase.GetOrderInfo(
+	order, err := c.OrderInformer.GetInfo(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

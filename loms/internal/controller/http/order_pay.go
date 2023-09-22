@@ -1,10 +1,15 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/loms/internal/models"
 )
+
+type OrderPayer interface {
+	MarkAsPaid(ctx context.Context, orderID models.OrderID) error
+}
 
 type OrderPayRequest struct {
 	OrderID int64 `json:"orderID,omitempty"`
@@ -29,7 +34,7 @@ func (c *Controller) OrderPayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.OMSUsecase.MarkOrderAsPaid(
+	err := c.OrderPayer.MarkAsPaid(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

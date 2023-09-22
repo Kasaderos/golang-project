@@ -1,10 +1,15 @@
 package controller_http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"route256/loms/internal/models"
 )
+
+type StocksInformer interface {
+	GetStockInfo(ctx context.Context, SKU models.SKU) (count uint64, err error)
+}
 
 type GetStockInfoRequest struct {
 	SKU uint32 `json:"sku,omitempty"`
@@ -33,10 +38,7 @@ func (c *Controller) StockInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	count, err := c.WMSUsecase.GetStockInfo(
-		ctx,
-		models.SKU(req.SKU),
-	)
+	count, err := c.StocksInformer.GetStockInfo(ctx, models.SKU(req.SKU))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
