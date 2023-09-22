@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"route256/loms/internal/models"
-	oms "route256/loms/internal/usecase/OMS"
 	"time"
 )
 
@@ -11,8 +10,6 @@ const OrderExpiration = time.Minute * 10
 
 type omsRepository struct {
 }
-
-var _ oms.OMSRepository = (*omsRepository)(nil)
 
 func NewOMSRepostiory() *omsRepository {
 	return &omsRepository{}
