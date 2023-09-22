@@ -7,7 +7,7 @@ import (
 	"route256/loms/internal/models"
 )
 
-type OrderInformer interface {
+type OrderInfoService interface {
 	GetInfo(ctx context.Context, orderID models.OrderID) (*models.Order, error)
 }
 
@@ -45,7 +45,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := c.OrderInformer.GetInfo(
+	order, err := c.OrderInfoService.GetInfo(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

@@ -7,7 +7,7 @@ import (
 	"route256/loms/internal/models"
 )
 
-type OrderPayer interface {
+type OrderPayService interface {
 	MarkAsPaid(ctx context.Context, orderID models.OrderID) error
 }
 
@@ -34,7 +34,7 @@ func (c *Controller) OrderPayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.OrderPayer.MarkAsPaid(
+	err := c.OrderPayService.MarkAsPaid(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

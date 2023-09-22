@@ -7,7 +7,7 @@ import (
 	"route256/loms/internal/models"
 )
 
-type StocksInformer interface {
+type StockInfoService interface {
 	GetStockInfo(ctx context.Context, SKU models.SKU) (count uint64, err error)
 }
 
@@ -38,7 +38,7 @@ func (c *Controller) StockInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	count, err := c.StocksInformer.GetStockInfo(ctx, models.SKU(req.SKU))
+	count, err := c.StockInfoService.GetStockInfo(ctx, models.SKU(req.SKU))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

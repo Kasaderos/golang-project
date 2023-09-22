@@ -8,11 +8,11 @@ import (
 	dto "route256/loms/internal/services"
 )
 
-type OrderCreator interface {
+type OrderCreateService interface {
 	CreateOrder(ctx context.Context, userID models.UserID, info dto.CreateOrderInfo) (models.OrderID, error)
 }
 
-type CreateOrderRequest struct {
+type OrderCreateRequest struct {
 	UserID int64 `json:"user"`
 	Items  []struct {
 		SKU   int64  `json:"sku"`
@@ -20,11 +20,11 @@ type CreateOrderRequest struct {
 	} `json:"items,omitempty"`
 }
 
-type CreateOrderResponse struct {
+type OrderCreateResponse struct {
 	OrderID int64 `json:"orderID"`
 }
 
-func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) OrderCreateHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method != http.MethodPost {
@@ -32,7 +32,7 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var req CreateOrderRequest
+	var req OrderCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -43,7 +43,7 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	orderID, err := c.OrderCreator.CreateOrder(
+	orderID, err := c.OrderCreateService.CreateOrder(
 		ctx,
 		models.UserID(req.UserID),
 		req.CreateOrderInfo(),
@@ -57,7 +57,7 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 	// but I think we should return 201
 	w.WriteHeader(http.StatusOK)
 
-	resp := CreateOrderResponse{
+	resp := OrderCreateResponse{
 		OrderID: int64(orderID),
 	}
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -67,11 +67,11 @@ func (c *Controller) CreateOrderHandler(w http.ResponseWriter, r *http.Request) 
 
 }
 
-func (req *CreateOrderRequest) validate() error {
+func (req *OrderCreateRequest) validate() error {
 	return nil
 }
 
-func (req *CreateOrderRequest) CreateOrderInfo() dto.CreateOrderInfo {
+func (req *OrderCreateRequest) CreateOrderInfo() dto.CreateOrderInfo {
 	info := dto.CreateOrderInfo{
 		Items: make([]models.ItemOrderInfo, 0, len(req.Items)),
 	}

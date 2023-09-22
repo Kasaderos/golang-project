@@ -9,10 +9,10 @@ func (c *Controller) NewRouter() http.Handler {
 
 	handler := MiddlewareRecovery(mux)
 
-	mux.HandleFunc("/order/create", c.CreateOrderHandler)
+	mux.HandleFunc("/order/create", c.OrderCreateHandler)
 	mux.HandleFunc("/order/info", c.OrderInfoHandler)
 	mux.HandleFunc("/order/pay", c.OrderPayHandler)
-	mux.HandleFunc("/order/cancel", c.CancelOrderHandler)
+	mux.HandleFunc("/order/cancel", c.OrderCancelHandler)
 	mux.HandleFunc("/stock/info", c.StockInfoHandler)
 
 	return handler

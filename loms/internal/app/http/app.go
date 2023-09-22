@@ -34,12 +34,12 @@ func Run() error {
 	stocksInformer := stock.NewStocksService(wmsRepo)
 
 	// Controller
-	controller := controller_http.NewController(controller_http.Usecases{
-		OrderCreator:   orderCreator,
-		OrderInformer:  orderInformer,
-		OrderPayer:     orderPayer,
-		OrderCanceller: orderCanceller,
-		StocksInformer: stocksInformer,
+	controller := controller_http.NewController(controller_http.Services{
+		OrderCreateService: orderCreator,
+		OrderInfoService:   orderInformer,
+		OrderPayService:    orderPayer,
+		OrderCancelService: orderCanceller,
+		StockInfoService:   stocksInformer,
 	})
 
 	// Router layer

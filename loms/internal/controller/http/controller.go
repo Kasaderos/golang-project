@@ -1,19 +1,19 @@
 package controller_http
 
-type Usecases struct {
-	OrderCreator
-	OrderInformer
-	OrderPayer
-	StocksInformer
-	OrderCanceller
+type Services struct {
+	OrderCreateService
+	OrderInfoService
+	OrderPayService
+	StockInfoService
+	OrderCancelService
 }
 
 type Controller struct {
-	Usecases
+	Services
 }
 
-func NewController(us Usecases) *Controller {
+func NewController(us Services) *Controller {
 	return &Controller{
-		Usecases: us,
+		Services: us,
 	}
 }

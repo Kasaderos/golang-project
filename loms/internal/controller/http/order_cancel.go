@@ -7,25 +7,25 @@ import (
 	"route256/loms/internal/models"
 )
 
-type Stocks interface {
+type StocksService interface {
 	GetStockInfo(
 		ctx context.Context,
 		SKU models.SKU,
 	) (count uint64, err error)
 }
 
-type OrderCanceller interface {
+type OrderCancelService interface {
 	CancelOrder(
 		ctx context.Context,
 		orderID models.OrderID,
 	) error
 }
 
-type CancelOrderRequest struct {
+type OrderCancelRequest struct {
 	OrderID int64 `json:"orderID,omitempty"`
 }
 
-func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) OrderCancelHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method != http.MethodPost {
@@ -33,7 +33,7 @@ func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var req CancelOrderRequest
+	var req OrderCancelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -44,7 +44,7 @@ func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := c.OrderCanceller.CancelOrder(
+	err := c.OrderCancelService.CancelOrder(
 		ctx,
 		models.OrderID(req.OrderID),
 	)
@@ -54,6 +54,6 @@ func (c *Controller) CancelOrderHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (req *CancelOrderRequest) validate() error {
+func (req *OrderCancelRequest) validate() error {
 	return nil
 }
