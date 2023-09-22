@@ -42,7 +42,7 @@ func (c *Controller) CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderID, err := c.CheckoutService.Checkout(ctx, models.UserID(req.User))
+	orderID, err := c.checkoutService.Checkout(ctx, models.UserID(req.User))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -34,7 +34,7 @@ func (c *Controller) ClearHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.ClearService.Clear(ctx, models.UserID(req.User))
+	err := c.clearService.Clear(ctx, models.UserID(req.User))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

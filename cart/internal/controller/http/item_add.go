@@ -46,7 +46,7 @@ func (c *Controller) ItemAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.ItemAddService.AddItem(
+	err := c.itemAddService.AddItem(
 		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 		models.SKU(req.SKU),

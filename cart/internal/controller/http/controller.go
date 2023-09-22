@@ -1,12 +1,6 @@
 package controller_http
 
-import "route256/cart/internal/services"
-
 type Services struct {
-	services.CartService
-}
-
-type Controller struct {
 	ItemAddService
 	CheckoutService
 	ItemDeleteService
@@ -14,6 +8,20 @@ type Controller struct {
 	ClearService
 }
 
-func NewController(us Services) *Controller {
-	return &Controller{}
+type Controller struct {
+	itemAddService    ItemAddService
+	checkoutService   CheckoutService
+	itemDeleteService ItemDeleteService
+	listItemService   ListItemService
+	clearService      ClearService
+}
+
+func NewController(srvs Services) *Controller {
+	return &Controller{
+		itemAddService:    srvs.ItemAddService,
+		checkoutService:   srvs.CheckoutService,
+		itemDeleteService: srvs.ItemDeleteService,
+		listItemService:   srvs.ListItemService,
+		clearService:      srvs.ClearService,
+	}
 }

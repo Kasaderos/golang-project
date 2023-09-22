@@ -53,7 +53,7 @@ func (c *Controller) ListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	totalPrice, items, err := c.ListItemService.ListItem(
+	totalPrice, items, err := c.listItemService.ListItem(
 		product.WithToken(ctx, productServiceToken),
 		models.UserID(req.User),
 	)

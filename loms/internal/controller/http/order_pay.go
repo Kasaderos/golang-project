@@ -34,7 +34,7 @@ func (c *Controller) OrderPayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.OrderPayService.MarkAsPaid(
+	err := c.orderPayService.MarkAsPaid(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

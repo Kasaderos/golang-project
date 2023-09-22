@@ -9,11 +9,19 @@ type Services struct {
 }
 
 type Controller struct {
-	Services
+	orderCreateService OrderCreateService
+	orderInfoService   OrderInfoService
+	orderPayService    OrderPayService
+	stockInfoService   StockInfoService
+	orderCancelService OrderCancelService
 }
 
-func NewController(us Services) *Controller {
+func NewController(srvs Services) *Controller {
 	return &Controller{
-		Services: us,
+		orderCreateService: srvs.OrderCreateService,
+		orderInfoService:   srvs.OrderInfoService,
+		orderPayService:    srvs.OrderPayService,
+		stockInfoService:   srvs.StockInfoService,
+		orderCancelService: srvs.OrderCancelService,
 	}
 }

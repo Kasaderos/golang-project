@@ -35,7 +35,7 @@ func (c *Controller) ItemDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := c.ItemDeleteService.DeleteItem(
+	err := c.itemDeleteService.DeleteItem(
 		ctx,
 		models.UserID(req.User),
 		models.SKU(req.SKU),

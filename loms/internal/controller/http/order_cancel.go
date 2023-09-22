@@ -44,7 +44,7 @@ func (c *Controller) OrderCancelHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err := c.OrderCancelService.CancelOrder(
+	err := c.orderCancelService.CancelOrder(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

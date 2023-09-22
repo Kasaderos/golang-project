@@ -43,7 +43,7 @@ func (c *Controller) OrderCreateHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	orderID, err := c.OrderCreateService.CreateOrder(
+	orderID, err := c.orderCreateService.CreateOrder(
 		ctx,
 		models.UserID(req.UserID),
 		req.CreateOrderInfo(),

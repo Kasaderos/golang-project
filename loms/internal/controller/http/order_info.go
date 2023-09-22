@@ -45,7 +45,7 @@ func (c *Controller) OrderInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := c.OrderInfoService.GetInfo(
+	order, err := c.orderInfoService.GetInfo(
 		ctx,
 		models.OrderID(req.OrderID),
 	)

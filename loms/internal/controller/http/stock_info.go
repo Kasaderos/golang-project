@@ -38,7 +38,7 @@ func (c *Controller) StockInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	count, err := c.StockInfoService.GetStockInfo(ctx, models.SKU(req.SKU))
+	count, err := c.stockInfoService.GetStockInfo(ctx, models.SKU(req.SKU))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
