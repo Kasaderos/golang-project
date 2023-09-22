@@ -1,39 +1,45 @@
 package http
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 	controller_http "route256/loms/internal/controller/http"
 	mock_repository "route256/loms/internal/repository/mock"
-	oms "route256/loms/internal/usecase/OMS"
-	wms "route256/loms/internal/usecase/WMS"
+	"route256/loms/internal/services/order"
+	"route256/loms/internal/services/stock"
 )
 
 func Run() error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	// Repository
 	omsRepo := mock_repository.NewOMSRepostiory()
 	wmsRepo := mock_repository.NewStocksRepostiory()
 
 	// Usecase
-	omsUsecase := oms.NewOMSUsecase(oms.Deps{
-		WMSRepository: wmsRepo,
-		OMSRepository: omsRepo,
+	orderCreator := order.NewCreateService(order.CreateDeps{
+		OrderCreator:   omsRepo,
+		StocksReserver: wmsRepo,
 	})
-	wmsUsecase := wms.NewWMSUsecase(wms.Deps{
-		WMSRepository: wmsRepo,
+	orderInformer := order.NewGetInfoService(omsRepo)
+	orderPayer := order.NewPayService(order.PayDeps{
+		OrderProvider:     omsRepo,
+		ReserveRemover:    wmsRepo,
+		OrderStatusSetter: omsRepo,
 	})
-
-	go omsUsecase.CancelNotPaidOrdersBackground(ctx)
+	orderCanceller := order.NewCancelService(order.CancelDeps{
+		OrderProvider:     omsRepo,
+		ReserveCanceller:  wmsRepo,
+		OrderStatusSetter: omsRepo,
+	})
+	stocksInformer := stock.NewStocksService(wmsRepo)
 
 	// Controller
 	controller := controller_http.NewController(controller_http.Usecases{
-		OMSUsecase: omsUsecase,
-		WMSUsecase: wmsUsecase,
+		OrderCreator:   orderCreator,
+		OrderInformer:  orderInformer,
+		OrderPayer:     orderPayer,
+		OrderCanceller: orderCanceller,
+		StocksInformer: stocksInformer,
 	})
 
 	// Router layer
