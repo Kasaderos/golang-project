@@ -14,7 +14,7 @@ type DeleteService struct {
 	itemDeleter ItemDeleter
 }
 
-func NewDeleteService(itemDeleter ItemDeleter) *DeleteService {
+func NewItemDeleteService(itemDeleter ItemDeleter) *DeleteService {
 	return &DeleteService{
 		itemDeleter: itemDeleter,
 	}

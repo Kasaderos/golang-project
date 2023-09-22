@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"route256/cart/internal/clients/loms"
+	"route256/cart/internal/clients/product"
 	controller_http "route256/cart/internal/controller/http"
 	mock_repository "route256/cart/internal/repository/mock"
-	"route256/cart/internal/services/loms"
-	"route256/cart/internal/services/product"
-	"route256/cart/internal/usecase/cart"
+	"route256/cart/internal/services/cart"
 )
 
 func Run() error {
@@ -16,19 +16,29 @@ func Run() error {
 	cartRepo := mock_repository.NewCartRepostiory()
 
 	// Services
-	lomsService := loms.NewLOMSService(os.Getenv("LOMS_SERVICE_URL"))
-	productService := product.NewProductService(os.Getenv("PRODUCT_SERVICE_URL"))
+	lomsClient := loms.NewLOMSService(os.Getenv("LOMS_SERVICE_URL"))
+	productClient := product.NewProductService(os.Getenv("PRODUCT_SERVICE_URL"))
 
 	// Usecase
-	cartUsecase := cart.NewCartUsecase(cart.Deps{
-		CartRepository: cartRepo,
-		LOMSService:    lomsService,
-		ProductService: productService,
+	addService := cart.NewAddService(cart.AddDeps{
+		ProductProvider: productClient,
+		StockProvider:   lomsClient,
+		ItemAdder:       cartRepo,
 	})
+	checkoutService := cart.NewCheckoutService(cart.CheckoutDeps{
+		OrderCreator:  lomsClient,
+		ItemsProvider: cartRepo,
+		ItemDeleter:   cartRepo,
+	})
+	itemDeleteService := cart.NewItemDeleteService(cartRepo)
+	listItemService := cart.NewListItemService(cartRepo, productClient)
 
 	// Controller
-	controller := controller_http.NewController(controller_http.Usecases{
-		CartService: cartUsecase,
+	controller := controller_http.NewController(controller_http.Services{
+		ItemAddService:    addService,
+		CheckoutService:   checkoutService,
+		ItemDeleteService: itemDeleteService,
+		ListItemService:   listItemService,
 	})
 
 	// Router layer

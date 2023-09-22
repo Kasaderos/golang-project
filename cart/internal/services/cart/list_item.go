@@ -14,7 +14,7 @@ type ListService struct {
 	productProvider ProductProvider
 }
 
-func NewListService(itemPr ItemsProvider, productPr ProductProvider) *ListService {
+func NewListItemService(itemPr ItemsProvider, productPr ProductProvider) *ListService {
 	return &ListService{
 		itemsProvider:   itemPr,
 		productProvider: productPr,
