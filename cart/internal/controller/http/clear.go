@@ -37,5 +37,8 @@ func (c *Controller) ClearHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (req *ClearRequest) validate() error {
+	if req.User <= 0 {
+		return ErrInvalidUser
+	}
 	return nil
 }

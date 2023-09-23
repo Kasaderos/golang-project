@@ -8,8 +8,6 @@ import (
 type cartRepository struct {
 }
 
-// var _ oms.OMSRepository = (*cartRepository)(nil)
-
 func NewCartRepostiory() *cartRepository {
 	return &cartRepository{}
 }

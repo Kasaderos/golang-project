@@ -57,7 +57,7 @@ func (c *Controller) ListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := toListRespone(items, totalPrice)
+	resp := toListResponse(items, totalPrice)
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func (req *ListRequest) validate() error {
 	return nil
 }
 
-func toListRespone(items []models.CartItem, totalPrice uint32) ListResponse {
+func toListResponse(items []models.CartItem, totalPrice uint32) ListResponse {
 	resp := ListResponse{
 		Items:      make([]ListItem, 0, len(items)),
 		TotalPrice: totalPrice,

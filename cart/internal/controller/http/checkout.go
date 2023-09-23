@@ -3,9 +3,12 @@ package controller_http
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"route256/cart/internal/models"
 )
+
+var ErrInvalidUser = errors.New("invalid user")
 
 type CartService interface {
 	Clear(ctx context.Context, userID models.UserID) error
@@ -54,5 +57,8 @@ func (c *Controller) CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (req *CheckoutRequest) validate() error {
+	if req.User <= 0 {
+		return ErrInvalidUser
+	}
 	return nil
 }

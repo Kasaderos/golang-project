@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,24 +16,20 @@ type contextKeyType string
 
 const tokenContextKey = contextKeyType("token")
 
-var (
-	ErrOrderNotCreated = errors.New("order not created")
-)
-
 const (
 	getProductInfoPath = "/get_product"
 )
 
-type productService struct {
+type ProductService struct {
 	name       string
 	baseURL    string
 	httpClient *http.Client
 }
 
-var _ cart.ProductProvider = (*productService)(nil)
+var _ cart.ProductProvider = (*ProductService)(nil)
 
-func NewProductService(baseURL string) *productService {
-	return &productService{
+func NewProductService(baseURL string) *ProductService {
+	return &ProductService{
 		name:       "product service",
 		httpClient: &http.Client{},
 		baseURL:    baseURL,
@@ -53,7 +48,7 @@ func getTokenFromContext(ctx context.Context) string {
 	return val
 }
 
-func (c *productService) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
+func (c *ProductService) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
 	reqBody := GetProductRequest{
 		Token: getTokenFromContext(ctx),
 		SKU:   uint32(sku),
@@ -69,7 +64,7 @@ func (c *productService) GetProductInfo(ctx context.Context, sku models.SKU) (na
 		return "", 0, fmt.Errorf("%s: join path %w, base '%s' path '%s'", c.name, err, c.baseURL, getProductInfoPath)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, reqURL, bytes.NewBuffer(data))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewBuffer(data))
 	if err != nil {
 		return "", 0, fmt.Errorf("%s: failed to create HTTP request: %w", c.name, err)
 	}

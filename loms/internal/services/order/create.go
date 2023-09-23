@@ -2,13 +2,12 @@ package order
 
 import (
 	"context"
-	"math/rand"
 	"route256/loms/internal/models"
 	dto "route256/loms/internal/services"
 )
 
 type OrderCreator interface {
-	CreateOrder(ctx context.Context, order models.Order) error
+	CreateOrder(ctx context.Context, order models.Order) (models.OrderID, error)
 }
 
 type StocksReserver interface {
@@ -37,16 +36,13 @@ func (usc *CreateService) CreateOrder(
 	userID models.UserID,
 	info dto.CreateOrderInfo,
 ) (models.OrderID, error) {
-	var (
-		OrderID = models.OrderID(rand.Int() % 1000)
-		order   = models.Order{
-			ID:     OrderID,
-			UserID: userID,
-			Items:  info.Items,
-		}
-	)
+	order := models.Order{
+		UserID: userID,
+		Items:  info.Items,
+	}
 
-	if err := usc.orderCreator.CreateOrder(ctx, order); err != nil {
+	orderID, err := usc.orderCreator.CreateOrder(ctx, order)
+	if err != nil {
 		return models.OrderID(-1), err
 	}
 
@@ -54,5 +50,5 @@ func (usc *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	return OrderID, nil
+	return orderID, nil
 }

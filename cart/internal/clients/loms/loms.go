@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,32 +11,28 @@ import (
 	"route256/cart/internal/services/cart"
 )
 
-var (
-	ErrOrderNotCreated = errors.New("order not created")
-)
-
 const (
 	CreateOrderAPIPath = "/order/create"
 	GetStockAPIPath    = "/stock/info"
 )
 
-type lomsService struct {
+type LOMSService struct {
 	name       string
 	baseURL    string
 	httpClient *http.Client
 }
 
-var _ cart.OrderCreator = (*lomsService)(nil)
+var _ cart.OrderCreator = (*LOMSService)(nil)
 
-func NewLOMSService(baseURL string) *lomsService {
-	return &lomsService{
+func NewLOMSService(baseURL string) *LOMSService {
+	return &LOMSService{
 		name:       "loms",
 		httpClient: &http.Client{},
 		baseURL:    baseURL,
 	}
 }
 
-func (srv *lomsService) CreateOrder(
+func (srv *LOMSService) CreateOrder(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.CartItem,
@@ -63,7 +58,7 @@ func (srv *lomsService) CreateOrder(
 		return models.OrderID(0), err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return models.OrderID(0), err
 	}
@@ -76,7 +71,7 @@ func (srv *lomsService) CreateOrder(
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		var response CreateOrderErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 			return models.OrderID(0), err
@@ -92,7 +87,7 @@ func (srv *lomsService) CreateOrder(
 	return models.OrderID(respSt.OrderID), nil
 }
 
-func (srv *lomsService) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {
+func (srv *LOMSService) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {
 	body := GetStockInfoRequest{
 		SKU: uint32(sku),
 	}
@@ -120,7 +115,7 @@ func (srv *lomsService) GetStock(ctx context.Context, sku models.SKU) (count uin
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		var response CreateOrderErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 			return 0, err

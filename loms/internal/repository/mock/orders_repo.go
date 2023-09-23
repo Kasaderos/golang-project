@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"math/rand"
 	"route256/loms/internal/models"
 	"time"
 )
@@ -15,8 +16,8 @@ func NewOMSRepostiory() *omsRepository {
 	return &omsRepository{}
 }
 
-func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) error {
-	return nil
+func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) (models.OrderID, error) {
+	return models.OrderID(rand.Int() % 1000), nil
 }
 
 func (r *omsRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (*models.Order, error) {
