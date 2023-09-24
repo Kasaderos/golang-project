@@ -102,7 +102,7 @@ func (srv *LOMSService) GetStock(ctx context.Context, sku models.SKU) (count uin
 		return 0, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return 0, err
 	}
