@@ -1,132 +1,57 @@
 package loms
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/url"
 	"route256/cart/internal/models"
-	"route256/cart/internal/services/cart"
+	loms_v1 "route256/cart/pkg/api/loms/v1"
 )
 
-const (
-	CreateOrderAPIPath = "/order/create"
-	GetStockAPIPath    = "/stock/info"
-)
-
-type LOMSService struct {
-	name       string
-	baseURL    string
-	httpClient *http.Client
+type Client struct {
+	loms_v1.LOMSClient
 }
 
-var _ cart.OrderCreator = (*LOMSService)(nil)
-
-func NewLOMSService(baseURL string) *LOMSService {
-	return &LOMSService{
-		name:       "loms",
-		httpClient: &http.Client{},
-		baseURL:    baseURL,
-	}
+func NewClient(c loms_v1.LOMSClient) *Client {
+	return &Client{LOMSClient: c}
 }
 
-func (srv *LOMSService) CreateOrder(
+func (s *Client) CreateOrder(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.CartItem,
 ) (models.OrderID, error) {
-	body := CreateOrderRequest{
-		UserID: int64(userID),
-		Items:  make([]CreateOrderItem, 0, len(items)),
-	}
+	// todo
+	// add converter pkg
+	reqItems := make([]*loms_v1.CreateOrderItem, 0, len(items))
 	for _, item := range items {
-		body.Items = append(body.Items, CreateOrderItem{
-			SKU:   int64(item.SKU),
-			Count: item.Count,
+		reqItems = append(reqItems, &loms_v1.CreateOrderItem{
+			Sku:   int64(item.Count),
+			Count: uint32(item.Count),
 		})
 	}
-
-	reqBody, err := json.Marshal(body)
+	in := &loms_v1.CreateOrderRequest{
+		Order: &loms_v1.Order{
+			UserId: int64(userID),
+			Items:  reqItems,
+		},
+	}
+	resp, err := s.LOMSClient.CreateOrder(ctx, in)
 	if err != nil {
 		return models.OrderID(0), err
 	}
 
-	reqURL, err := url.JoinPath(srv.baseURL, CreateOrderAPIPath)
-	if err != nil {
-		return models.OrderID(0), err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
-	if err != nil {
-		return models.OrderID(0), err
-	}
-
-	resp, err := srv.httpClient.Do(req)
-	if err != nil {
-		return models.OrderID(0), err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	if resp.StatusCode != http.StatusOK {
-		var response CreateOrderErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			return models.OrderID(0), err
-		}
-		return models.OrderID(0), fmt.Errorf("%s: responded with: %s", srv.name, response.Message)
-	}
-
-	var respSt CreateOrderResponse
-	if err := json.NewDecoder(resp.Body).Decode(&resp); err != nil {
-		return models.OrderID(0), fmt.Errorf("%s: decode: %w", srv.name, err)
-	}
-
-	return models.OrderID(respSt.OrderID), nil
+	return models.OrderID(resp.OrderId), nil
 }
 
-func (srv *LOMSService) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {
-	body := GetStockInfoRequest{
-		SKU: uint32(sku),
+func (c *Client) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {
+	// todo
+	// add converter pkg
+	req := &loms_v1.GetStockInfoRequest{
+		Sku: uint32(sku),
 	}
-
-	reqBody, err := json.Marshal(body)
+	resp, err := c.LOMSClient.GetStockInfo(ctx, req)
 	if err != nil {
 		return 0, err
 	}
 
-	reqURL, err := url.JoinPath(srv.baseURL, GetStockAPIPath)
-	if err != nil {
-		return 0, err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewBuffer(reqBody))
-	if err != nil {
-		return 0, err
-	}
-
-	resp, err := srv.httpClient.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	if resp.StatusCode != http.StatusOK {
-		var response CreateOrderErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			return 0, err
-		}
-		return 0, fmt.Errorf("%s: responded with: %s", srv.name, response.Message)
-	}
-
-	var stockInfo GetStockInfoResponse
-	if err := json.NewDecoder(resp.Body).Decode(&stockInfo); err != nil {
-		return 0, err
-	}
-
-	return stockInfo.Count, nil
+	return resp.Count, nil
 }

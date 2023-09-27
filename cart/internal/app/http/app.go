@@ -4,19 +4,31 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"route256/cart/internal/clients/http/product"
 	"route256/cart/internal/clients/loms"
-	"route256/cart/internal/clients/product"
 	controller_http "route256/cart/internal/controller/http"
 	mock_repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/cart"
+	loms_grpc "route256/cart/pkg/api/loms/v1"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func Run() error {
 	// Repository
 	cartRepo := mock_repository.NewCartRepostiory()
 
-	// Services
-	lomsClient := loms.NewLOMSService(os.Getenv("LOMS_SERVICE_URL"))
+	// clients
+	lomsConn, err := grpc.Dial(os.Getenv("LOMS_GRPC_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("failed to connect to LOMS: %v", err)
+	}
+	defer lomsConn.Close()
+
+	grpcLOMSClient := loms_grpc.NewLOMSClient(lomsConn)
+
+	lomsClient := loms.NewClient(grpcLOMSClient)
 	productClient := product.NewProductService(os.Getenv("PRODUCT_SERVICE_URL"))
 
 	// Usecase
