@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"route256/cart/internal/clients/http/product"
+	"route256/cart/internal/clients/product"
 	"route256/cart/internal/models"
 )
 

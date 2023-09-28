@@ -4,12 +4,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"route256/cart/internal/clients/http/product"
 	"route256/cart/internal/clients/loms"
+	"route256/cart/internal/clients/product"
 	controller_http "route256/cart/internal/controller/http"
 	mock_repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/cart"
 	loms_grpc "route256/cart/pkg/api/loms/v1"
+	products_grpc "route256/cart/pkg/api/products/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -22,14 +23,21 @@ func Run() error {
 	// clients
 	lomsConn, err := grpc.Dial(os.Getenv("LOMS_GRPC_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("failed to connect to LOMS: %v", err)
+		log.Fatalf("failed to connect to LOMS server: %v", err)
 	}
 	defer lomsConn.Close()
 
+	productsConn, err := grpc.Dial(os.Getenv("PRODUCTS_GRPC_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("failed to connect to Products server: %v", err)
+	}
+	defer productsConn.Close()
+
 	grpcLOMSClient := loms_grpc.NewLOMSClient(lomsConn)
+	grpcProductsClient := products_grpc.NewProductsClient(productsConn)
 
 	lomsClient := loms.NewClient(grpcLOMSClient)
-	productClient := product.NewProductService(os.Getenv("PRODUCT_SERVICE_URL"))
+	productClient := product.NewClient(grpcProductsClient)
 
 	// Usecase
 	addService := cart.NewAddService(cart.AddDeps{
