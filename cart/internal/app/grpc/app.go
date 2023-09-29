@@ -4,15 +4,14 @@ import (
 	"log"
 	"net"
 	"os"
+	api "route256/cart/internal/api/carts"
 	"route256/cart/internal/clients/loms"
 	"route256/cart/internal/clients/product"
 	mock_repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/cart"
+	desc "route256/cart/pkg/api/carts/v1"
 	products_grpc "route256/cart/pkg/api/products/v1"
 	loms_grpc "route256/loms/pkg/api/loms/v1"
-
-	api "route256/cart/internal/api/carts"
-	desc "route256/cart/pkg/api/carts/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
