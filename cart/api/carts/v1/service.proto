@@ -1,0 +1,95 @@
+
+syntax = "proto3";
+
+package gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.carts.v1;
+
+option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/api/carts/v1;carts";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto"; 
+
+
+service Carts {
+  rpc ItemAdd(ItemAddRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/v1/cart/item/add"
+        body: "item"
+    };
+  }
+
+  rpc ItemDelete(ItemDeleteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/v1/cart/item/delete"
+        body: "*"
+    };
+  }
+
+  rpc Clear(ClearRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/v1/cart/clear"
+        body: "*"
+    };
+  }
+
+  rpc Checkout(CheckoutRequest) returns (CheckoutResponse) {
+    option (google.api.http) = {
+        post: "/v1/cart/checkout"
+        body: "*"
+    };
+  }
+
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+        post: "/v1/cart/list"
+        body: "*"
+    };
+  }
+
+}
+
+message ItemAddRequest {
+    CartItem item = 1;
+}
+
+message CartItem {
+    int64 user = 1;
+    uint32 sku = 2;
+    uint32 count = 3;
+}
+
+message ItemDeleteRequest {
+	int64 user = 1;
+	uint32 sku = 2;
+}
+
+message ClearRequest {
+	int64 user = 1;
+}
+
+
+message CheckoutRequest {
+    int64 user = 1;
+}
+
+message CheckoutResponse {
+    int64 order_id = 1;
+}
+
+message ListRequest {
+    int64 user = 1;
+}
+
+message ListResponse {
+    repeated ListItem items = 1;
+    uint32 total_price = 2;
+}
+
+message ListItem {
+    uint32 sku = 1;
+    uint32 count = 2;
+    string name = 3;
+    uint32 price = 4;
+}
+
+
+

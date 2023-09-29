@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	httpapp "route256/cart/internal/app/http"
+	grpc_app "route256/cart/internal/app/grpc"
 )
 
 func main() {
-	log.Fatal(httpapp.Run())
+	log.Fatal(grpc_app.Run())
 }

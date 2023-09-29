@@ -3,7 +3,7 @@ package loms
 import (
 	"context"
 	"route256/cart/internal/models"
-	loms_v1 "route256/cart/pkg/api/loms/v1"
+	loms_v1 "route256/loms/pkg/api/loms/v1"
 )
 
 type Client struct {

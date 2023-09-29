@@ -2,15 +2,17 @@ package http
 
 import (
 	"log"
-	"net/http"
+	"net"
 	"os"
 	"route256/cart/internal/clients/loms"
 	"route256/cart/internal/clients/product"
-	controller_http "route256/cart/internal/controller/http"
 	mock_repository "route256/cart/internal/repository/mock"
 	"route256/cart/internal/services/cart"
-	loms_grpc "route256/cart/pkg/api/loms/v1"
 	products_grpc "route256/cart/pkg/api/products/v1"
+	loms_grpc "route256/loms/pkg/api/loms/v1"
+
+	api "route256/cart/internal/api/carts"
+	desc "route256/cart/pkg/api/carts/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -54,8 +56,17 @@ func Run() error {
 	listItemService := cart.NewListItemService(cartRepo, productClient)
 	clearService := cart.NewClearService(cartRepo)
 
-	// Controller
-	controller := controller_http.NewController(controller_http.Services{
+	// GRPC Server
+	lis, err := net.Listen("tcp", os.Getenv("ADDR"))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	grpcServer := grpc.NewServer()
+
+	// reflection.Register(grpcServer)
+
+	controller := api.NewServer(api.Deps{
 		ItemAddService:    addService,
 		CheckoutService:   checkoutService,
 		ItemDeleteService: itemDeleteService,
@@ -63,12 +74,9 @@ func Run() error {
 		ClearService:      clearService,
 	})
 
-	// Router layer
-	router := controller.NewRouter()
+	desc.RegisterCartsServer(grpcServer, controller)
 
-	// Run service
-	addr := os.Getenv("ADDR")
-	log.Printf("cart server is listening at %s", addr)
+	log.Printf("server listening at %v", lis.Addr())
 
-	return http.ListenAndServe(addr, router)
+	return grpcServer.Serve(lis)
 }

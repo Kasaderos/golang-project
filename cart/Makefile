@@ -111,17 +111,17 @@ vendor-proto/validate:
 		rm -rf vendor-proto/tmp
 
 
-LOMS_PROTO_PATH:="api/loms/v1"
+CARTS_PROTO_PATH:="api/carts/v1"
 PRODUCTS_PROTO_PATH:="api/products/v1"
 
 # Генерация протофайлов с использованием protoc
 PHONY: .protoc-generate
 .protoc-generate: 
-	mkdir -p pkg/${LOMS_PROTO_PATH}
-	$(PROTOC) -I ${LOMS_PROTO_PATH} -I vendor-proto \
-	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${LOMS_PROTO_PATH} --go_opt paths=source_relative \
-	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out pkg/${LOMS_PROTO_PATH} --go-grpc_opt paths=source_relative \
-	$(LOMS_PROTO_PATH)/service.proto
+	mkdir -p pkg/${CARTS_PROTO_PATH}
+	$(PROTOC) -I ${CARTS_PROTO_PATH} -I vendor-proto \
+	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${CARTS_PROTO_PATH} --go_opt paths=source_relative \
+	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out pkg/${CARTS_PROTO_PATH} --go-grpc_opt paths=source_relative \
+	$(CARTS_PROTO_PATH)/service.proto
 	mkdir -p pkg/${PRODUCTS_PROTO_PATH}
 	$(PROTOC) -I ${PRODUCTS_PROTO_PATH} -I vendor-proto \
 	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${PRODUCTS_PROTO_PATH} --go_opt paths=source_relative \
