@@ -15,6 +15,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 )
 
 func Run() error {
@@ -28,14 +29,14 @@ func Run() error {
 	}
 	defer lomsConn.Close()
 
-	productsConn, err := grpc.Dial(os.Getenv("PRODUCTS_SERVICE_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	productsConn, err := grpc.Dial(os.Getenv("PRODUCT_SERVICE_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to Products server: %v", err)
 	}
 	defer productsConn.Close()
 
 	grpcLOMSClient := loms_grpc.NewLOMSClient(lomsConn)
-	grpcProductsClient := products_grpc.NewProductsClient(productsConn)
+	grpcProductsClient := products_grpc.NewProductServiceClient(productsConn)
 
 	lomsClient := loms.NewClient(grpcLOMSClient)
 	productClient := product.NewClient(grpcProductsClient)
@@ -63,7 +64,7 @@ func Run() error {
 
 	grpcServer := grpc.NewServer()
 
-	// reflection.Register(grpcServer)
+	reflection.Register(grpcServer)
 
 	controller := api.NewServer(api.Deps{
 		ItemAddService:    addService,

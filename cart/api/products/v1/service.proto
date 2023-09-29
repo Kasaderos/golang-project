@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-package gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.products.v1;
+package route256.product;
 
 option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/api/products/v1;products";
 
-service Products {
+service ProductService {
   rpc GetProduct(GetProductRequest) returns (GetProductResponse);
 }
 
 message GetProductRequest  {
-  uint32 sku = 1;
-  string token = 2;
+  string token = 1;
+  int64 sku = 2;
 }
 
 message GetProductResponse  {
   string name = 1;
-  uint32 price = 2;
+  int64 price = 2;
 }
 
-message GetProductErrorResponse  {
+message Status {
   int32 code = 1;
   string message = 2;
 }

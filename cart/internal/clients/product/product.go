@@ -13,14 +13,14 @@ type contextKeyType string
 const tokenContextKey = contextKeyType("token")
 
 type Client struct {
-	products_v1.ProductsClient
+	products_v1.ProductServiceClient
 }
 
 var _ cart.ProductProvider = (*Client)(nil)
 
-func NewClient(c products_v1.ProductsClient) *Client {
+func NewClient(c products_v1.ProductServiceClient) *Client {
 	return &Client{
-		ProductsClient: c,
+		ProductServiceClient: c,
 	}
 }
 
@@ -39,13 +39,13 @@ func getTokenFromContext(ctx context.Context) string {
 func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
 	req := &products_v1.GetProductRequest{
 		Token: getTokenFromContext(ctx),
-		Sku:   uint32(sku),
+		Sku:   int64(sku),
 	}
 
-	resp, err := c.ProductsClient.GetProduct(ctx, req)
+	resp, err := c.ProductServiceClient.GetProduct(ctx, req)
 	if err != nil {
 		return "", 0, err
 	}
 
-	return resp.Name, resp.Price, nil
+	return resp.Name, uint32(resp.Price), nil
 }
