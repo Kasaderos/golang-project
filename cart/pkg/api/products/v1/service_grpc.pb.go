@@ -8,7 +8,6 @@ package products
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,14 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Products_GetProduct_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.pkg.products.v1.Products/GetProduct"
+	Products_GetProduct_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.products.v1.Products/GetProduct"
 )
 
 // ProductsClient is the client API for Products service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductsClient interface {
-	// string token = 1; todo meta
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
 }
 
@@ -52,7 +50,6 @@ func (c *productsClient) GetProduct(ctx context.Context, in *GetProductRequest, 
 // All implementations must embed UnimplementedProductsServer
 // for forward compatibility
 type ProductsServer interface {
-	// string token = 1; todo meta
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
 	mustEmbedUnimplementedProductsServer()
 }
@@ -99,7 +96,7 @@ func _Products_GetProduct_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Products_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "gitlab.ozon.dev.go_8_middle_project.pkg.products.v1.Products",
+	ServiceName: "gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.products.v1.Products",
 	HandlerType: (*ProductsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

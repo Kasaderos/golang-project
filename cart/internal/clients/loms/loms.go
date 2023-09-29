@@ -21,20 +21,20 @@ func (s *Client) CreateOrder(
 ) (models.OrderID, error) {
 	// todo
 	// add converter pkg
-	reqItems := make([]*loms_v1.CreateOrderItem, 0, len(items))
+	reqItems := make([]*loms_v1.OrderInfoItem, 0, len(items))
 	for _, item := range items {
-		reqItems = append(reqItems, &loms_v1.CreateOrderItem{
+		reqItems = append(reqItems, &loms_v1.OrderInfoItem{
 			Sku:   int64(item.Count),
 			Count: uint32(item.Count),
 		})
 	}
-	in := &loms_v1.CreateOrderRequest{
+	in := &loms_v1.OrderCreateRequest{
 		Order: &loms_v1.Order{
 			UserId: int64(userID),
 			Items:  reqItems,
 		},
 	}
-	resp, err := s.LOMSClient.CreateOrder(ctx, in)
+	resp, err := s.LOMSClient.OrderCreate(ctx, in)
 	if err != nil {
 		return models.OrderID(0), err
 	}

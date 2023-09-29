@@ -21,13 +21,13 @@ func Run() error {
 	cartRepo := mock_repository.NewCartRepostiory()
 
 	// clients
-	lomsConn, err := grpc.Dial(os.Getenv("LOMS_GRPC_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	lomsConn, err := grpc.Dial(os.Getenv("LOMS_SERVICE_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to LOMS server: %v", err)
 	}
 	defer lomsConn.Close()
 
-	productsConn, err := grpc.Dial(os.Getenv("PRODUCTS_GRPC_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	productsConn, err := grpc.Dial(os.Getenv("PRODUCTS_SERVICE_URL"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("failed to connect to Products server: %v", err)
 	}

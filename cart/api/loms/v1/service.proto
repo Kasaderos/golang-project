@@ -1,19 +1,41 @@
 syntax = "proto3";
 
-package gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1;
+package gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.loms.v1;
 
-option go_package = "gitlab.ozon.dev/go/classroom-8/students/workshop-2/pkg/api/loms/v1;loms";
+option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/api/loms/v1;loms";
 
 import "google/api/annotations.proto"; // REST описание методов
+import "google/protobuf/empty.proto";
 // import "google/api/field_behavior.proto";
 // import "protoc-gen-openapiv2/options/annotations.proto"; // openapiv2 спецификация
 // import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
 
 service LOMS {
-  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+  rpc OrderCreate(OrderCreateRequest) returns (OrderCreateResponse) {
     option (google.api.http) = {
     post: "/v1/order/create"
       body: "order"
+    };
+  }
+
+  rpc CancelOrder(CancelOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+    post: "/v1/order/cancel"
+      body: "*"
+    };
+  }
+  
+  rpc GetOrderInfo(GetOrderInfoRequest) returns (GetOrderInfoResponse) {
+    option (google.api.http) = {
+    post: "/v1/order/info"
+      body: "*"
+    };
+  }
+
+  rpc OrderPay(OrderPayRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+    post: "/v1/order/pay"
+      body: "*"
     };
   }
 
@@ -25,21 +47,21 @@ service LOMS {
 }
 
 
-message CreateOrderRequest {
+message OrderCreateRequest {
   Order order = 1;
 }
 
 message Order {
 	int64 user_id = 1; 
-  repeated CreateOrderItem items = 2;
+  repeated OrderInfoItem items = 2;
 }
 
-message CreateOrderItem {
+message OrderInfoItem {
   int64 sku = 1;
   uint32 count = 2; // <= uint16 
 }
 
-message CreateOrderResponse {
+message OrderCreateResponse {
   int64 order_id = 1;
 }
 
@@ -57,4 +79,22 @@ message CreateOrderErrorResponse {
 
 message GetStockInfoErrorResponse {
   string message = 1;
+}
+
+message CancelOrderRequest {
+	int64 order_id = 1;
+}
+
+message GetOrderInfoRequest {
+	int64 order_id = 1;
+}
+
+message GetOrderInfoResponse {
+  string status = 1;
+  int64 user = 2;
+  repeated OrderInfoItem items = 3;
+}
+
+message OrderPayRequest {
+	int64 order_id = 1;
 }
