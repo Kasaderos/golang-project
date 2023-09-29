@@ -118,10 +118,11 @@ LOMS_PROTO_PATH:="api/loms/v1"
 PHONY: .protoc-generate
 .protoc-generate: 
 	mkdir -p pkg/${LOMS_PROTO_PATH}
-	$(PROTOC) -I ${LOMS_PROTO_PATH} -I vendor-proto \
-	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${LOMS_PROTO_PATH} --go_opt paths=source_relative \
-	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out pkg/${LOMS_PROTO_PATH} --go-grpc_opt paths=source_relative \
-	$(LOMS_PROTO_PATH)/service.proto
+	$(PROTOC) -I . -I vendor-proto \
+    --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=paths=source_relative:./pkg \
+    --plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=paths=source_relative:pkg \
+  	./$(LOMS_PROTO_PATH)/service.proto
+	
 
 # Генерация протофайлов с использованием protoc
 PHONY: generate

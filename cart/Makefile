@@ -118,10 +118,10 @@ PRODUCTS_PROTO_PATH:="api/products/v1"
 PHONY: .protoc-generate
 .protoc-generate: 
 	mkdir -p pkg/${CARTS_PROTO_PATH}
-	$(PROTOC) -I ${CARTS_PROTO_PATH} -I vendor-proto \
-	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${CARTS_PROTO_PATH} --go_opt paths=source_relative \
-	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out pkg/${CARTS_PROTO_PATH} --go-grpc_opt paths=source_relative \
-	$(CARTS_PROTO_PATH)/service.proto
+	$(PROTOC) -I . -I vendor-proto \
+    --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=paths=source_relative:./pkg \
+    --plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=paths=source_relative:pkg \
+  	./$(CARTS_PROTO_PATH)/service.proto
 	mkdir -p pkg/${PRODUCTS_PROTO_PATH}
 	$(PROTOC) -I ${PRODUCTS_PROTO_PATH} -I vendor-proto \
 	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${PRODUCTS_PROTO_PATH} --go_opt paths=source_relative \
