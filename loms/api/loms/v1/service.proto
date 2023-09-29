@@ -25,7 +25,7 @@ service LOMS {
     };
   }
   
-  rpc GetOrderInfo(GetOrderInfoRequest) returns (google.protobuf.Empty) {
+  rpc GetOrderInfo(GetOrderInfoRequest) returns (GetOrderInfoResponse) {
     option (google.api.http) = {
     post: "/v1/order/info"
       body: "*"
@@ -96,5 +96,5 @@ message GetOrderInfoResponse {
 }
 
 message OrderPayRequest {
-  int64 user = 1;
+	int64 order_id = 1;
 }
