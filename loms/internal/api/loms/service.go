@@ -3,9 +3,8 @@ package loms
 import (
 	"context"
 	"route256/loms/internal/models"
-	servicepb "route256/loms/pkg/api/loms/v1"
-
 	dto "route256/loms/internal/services"
+	servicepb "route256/loms/pkg/api/loms/v1"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 )

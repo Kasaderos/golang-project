@@ -8,11 +8,9 @@ import (
 	mock_repository "route256/loms/internal/repository/mock"
 	"route256/loms/internal/services/order"
 	"route256/loms/internal/services/stock"
-
 	desc "route256/loms/pkg/api/loms/v1"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 func Run() error {
@@ -46,7 +44,7 @@ func Run() error {
 
 	grpcServer := grpc.NewServer()
 
-	reflection.Register(grpcServer)
+	// reflection.Register(grpcServer)
 
 	controller := api.NewServer(api.Deps{
 		OrderCreateService: orderCreateService,

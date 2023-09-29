@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	LOMS_OrderCreate_FullMethodName  = "/gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS/OrderCreate"
-	LOMS_CancelOrder_FullMethodName  = "/gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS/CancelOrder"
-	LOMS_GetOrderInfo_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS/GetOrderInfo"
-	LOMS_OrderPay_FullMethodName     = "/gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS/OrderPay"
-	LOMS_GetStockInfo_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS/GetStockInfo"
+	LOMS_OrderCreate_FullMethodName  = "/gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS/OrderCreate"
+	LOMS_CancelOrder_FullMethodName  = "/gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS/CancelOrder"
+	LOMS_GetOrderInfo_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS/GetOrderInfo"
+	LOMS_OrderPay_FullMethodName     = "/gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS/OrderPay"
+	LOMS_GetStockInfo_FullMethodName = "/gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS/GetStockInfo"
 )
 
 // LOMSClient is the client API for LOMS service.
@@ -229,7 +229,7 @@ func _LOMS_GetStockInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var LOMS_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "gitlab.ozon.dev.go_8_middle_project.pkg.loms.v1.LOMS",
+	ServiceName: "gitlab.ozon.dev.go_8_middle_project.loms.pkg.api.loms.v1.LOMS",
 	HandlerType: (*LOMSServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
