@@ -8,8 +8,8 @@ services:
     depends_on:
       - loms
     environment:
-      - LOMS_SERVICE_URL=http://loms:82
-      - PRODUCT_SERVICE_URL=http://route256.pavl.uk:8082
+      - LOMS_SERVICE_URL=loms:8082
+      - PRODUCT_SERVICE_URL=route256.pavl.uk:8082
       - ADDR=:8082
   loms:
     image: loms
