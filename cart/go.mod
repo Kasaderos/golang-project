@@ -3,6 +3,7 @@ module route256/cart
 go 1.21
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230920204549-e6e6cdab5c13
 	google.golang.org/grpc v1.58.2

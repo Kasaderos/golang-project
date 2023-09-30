@@ -62,6 +62,10 @@ type (
 )
 
 func (s Service) ItemAdd(ctx context.Context, req *servicepb.ItemAddRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	if err := s.itemAddService.AddItem(
 		ctx,
 		models.UserID(req.User),
@@ -74,6 +78,10 @@ func (s Service) ItemAdd(ctx context.Context, req *servicepb.ItemAddRequest) (*e
 	return &emptypb.Empty{}, nil
 }
 func (s Service) ItemDelete(ctx context.Context, req *servicepb.ItemDeleteRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	if err := s.itemDeleteService.DeleteItem(
 		ctx,
 		models.UserID(req.User),
@@ -85,6 +93,10 @@ func (s Service) ItemDelete(ctx context.Context, req *servicepb.ItemDeleteReques
 }
 
 func (s Service) Clear(ctx context.Context, req *servicepb.ClearRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	if err := s.clearService.Clear(
 		ctx,
 		models.UserID(req.User),
@@ -95,6 +107,10 @@ func (s Service) Clear(ctx context.Context, req *servicepb.ClearRequest) (*empty
 }
 
 func (s Service) Checkout(ctx context.Context, req *servicepb.CheckoutRequest) (*servicepb.CheckoutResponse, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	orderID, err := s.checkoutService.Checkout(
 		ctx,
 		models.UserID(req.User),
@@ -109,6 +125,10 @@ func (s Service) Checkout(ctx context.Context, req *servicepb.CheckoutRequest) (
 }
 
 func (s Service) List(ctx context.Context, req *servicepb.ListRequest) (*servicepb.ListResponse, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	totalPrice, list, err := s.listItemService.ListItem(
 		ctx,
 		models.UserID(req.User),

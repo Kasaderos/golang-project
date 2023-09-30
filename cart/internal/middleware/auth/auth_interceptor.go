@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"log"
 	"route256/cart/internal/clients/product"
 	servicepb "route256/cart/pkg/api/carts/v1"
 
@@ -23,16 +22,12 @@ var (
 )
 
 func Interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-	log.Println(info.FullMethod)
 	if _, yes := needProductServiceTokenMethods[info.FullMethod]; yes {
-		log.Println(info.FullMethod)
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return nil, ErrProductServiceTokenRequired
 		}
 
-		log.Println(info.FullMethod)
-		log.Println(md)
 		values := md.Get(ProductServiceMetaKey)
 		if len(values) < 1 {
 			return nil, ErrProductServiceTokenRequired

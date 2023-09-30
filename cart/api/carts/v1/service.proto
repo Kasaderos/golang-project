@@ -7,6 +7,9 @@ option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/ap
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto"; 
+import "google/api/field_behavior.proto";
+import "google/protobuf/descriptor.proto";
+import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
 
 // See more: https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/a_bit_of_everything.proto
 // option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
@@ -69,22 +72,50 @@ service Carts {
 }
 
 message ItemAddRequest {
-  int64 user = 1;
-  uint32 sku = 2;
-  uint32 count = 3;
+  int64 user = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+  uint32 sku = 2 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
+  uint32 count = 3 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
 }
 
 message ItemDeleteRequest {
-	int64 user = 1;
-	uint32 sku = 2;
+	int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+	uint32 sku = 2 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
 }
 
 message ClearRequest {
-	int64 user = 1;
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }
 
 message CheckoutRequest {
-  int64 user = 1;
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }
 
 message CheckoutResponse {
@@ -92,7 +123,11 @@ message CheckoutResponse {
 }
 
 message ListRequest {
-    int64 user = 1;
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }
 
 message ListResponse {
@@ -106,6 +141,3 @@ message ListItem {
   string name = 3;
   uint32 price = 4;
 }
-
-
-
