@@ -29,10 +29,8 @@ func (s *Client) CreateOrder(
 		})
 	}
 	in := &loms_v1.OrderCreateRequest{
-		Order: &loms_v1.Order{
-			UserId: int64(userID),
-			Items:  reqItems,
-		},
+		UserId: int64(userID),
+		Items:  reqItems,
 	}
 	resp, err := s.LOMSClient.OrderCreate(ctx, in)
 	if err != nil {

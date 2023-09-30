@@ -13,45 +13,41 @@ import "google/protobuf/empty.proto";
 service LOMS {
   rpc OrderCreate(OrderCreateRequest) returns (OrderCreateResponse) {
     option (google.api.http) = {
-    post: "/v1/order/create"
-      body: "order"
+    post: "/order/create"
+      body: "*"
     };
   }
 
   rpc CancelOrder(CancelOrderRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-    post: "/v1/order/cancel"
+    post: "/order/cancel"
       body: "*"
     };
   }
   
   rpc GetOrderInfo(GetOrderInfoRequest) returns (GetOrderInfoResponse) {
     option (google.api.http) = {
-    post: "/v1/order/info"
+    post: "/order/info"
       body: "*"
     };
   }
 
   rpc OrderPay(OrderPayRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-    post: "/v1/order/pay"
+    post: "/order/pay"
       body: "*"
     };
   }
 
   rpc GetStockInfo(GetStockInfoRequest) returns (GetStockInfoResponse) {
     option (google.api.http) = {
-    post: "/v1/stock/info"
+    post: "/stock/info"
     };
   }
 }
 
 
 message OrderCreateRequest {
-  Order order = 1;
-}
-
-message Order {
 	int64 user_id = 1; 
   repeated OrderInfoItem items = 2;
 }

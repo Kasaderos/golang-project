@@ -72,8 +72,8 @@ type (
 )
 
 func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequest) (*servicepb.OrderCreateResponse, error) {
-	items := make([]models.ItemOrderInfo, 0, len(req.Order.Items))
-	for _, item := range req.Order.Items {
+	items := make([]models.ItemOrderInfo, 0, len(req.Items))
+	for _, item := range req.Items {
 		items = append(items, models.ItemOrderInfo{
 			SKU:   models.SKU(item.Sku),
 			Count: uint16(item.Count),
@@ -82,7 +82,7 @@ func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequ
 
 	orderID, err := s.orderCreateService.CreateOrder(
 		ctx,
-		models.UserID(req.Order.UserId),
+		models.UserID(req.UserId),
 		dto.CreateOrderInfo{
 			Items: items,
 		},
