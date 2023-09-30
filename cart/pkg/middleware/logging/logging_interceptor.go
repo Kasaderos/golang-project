@@ -16,9 +16,8 @@ func Interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInf
 	resp, err = handler(ctx, req)
 	if resp != nil {
 		rawResp, _ := protojson.Marshal((resp).(proto.Message))
-		log.Printf("method: %v, req: %v\n", info.FullMethod, string(rawResp))
+		log.Printf("method: %v, resp: %v\n", info.FullMethod, string(rawResp))
 	}
 
-	log.Printf("resp: %v, err: %v\n", resp, err)
 	return resp, err
 }

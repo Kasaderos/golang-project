@@ -72,6 +72,10 @@ type (
 )
 
 func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequest) (*servicepb.OrderCreateResponse, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	items := make([]models.ItemOrderInfo, 0, len(req.Items))
 	for _, item := range req.Items {
 		items = append(items, models.ItemOrderInfo{
@@ -97,6 +101,10 @@ func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequ
 }
 
 func (s Service) GetStockInfo(ctx context.Context, req *servicepb.GetStockInfoRequest) (*servicepb.GetStockInfoResponse, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	count, err := s.stockInfoService.GetStockInfo(ctx, models.SKU(req.Sku))
 	if err != nil {
 		return nil, err
@@ -108,6 +116,10 @@ func (s Service) GetStockInfo(ctx context.Context, req *servicepb.GetStockInfoRe
 }
 
 func (c *Service) CancelOrder(ctx context.Context, req *servicepb.CancelOrderRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	if err := c.orderCancelService.CancelOrder(
 		ctx,
 		models.OrderID(req.OrderId),
@@ -118,6 +130,10 @@ func (c *Service) CancelOrder(ctx context.Context, req *servicepb.CancelOrderReq
 }
 
 func (c *Service) GetOrderInfo(ctx context.Context, req *servicepb.GetOrderInfoRequest) (*servicepb.GetOrderInfoResponse, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	order, err := c.orderInfoService.GetInfo(
 		ctx,
 		models.OrderID(req.OrderId),
@@ -142,6 +158,10 @@ func (c *Service) GetOrderInfo(ctx context.Context, req *servicepb.GetOrderInfoR
 }
 
 func (c *Service) OrderPay(ctx context.Context, req *servicepb.OrderPayRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
 	if err := c.orderPayService.MarkAsPaid(
 		ctx,
 		models.OrderID(req.OrderId),

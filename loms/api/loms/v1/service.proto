@@ -6,9 +6,8 @@ option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/loms/pkg/ap
 
 import "google/api/annotations.proto"; // REST описание методов
 import "google/protobuf/empty.proto";
-// import "google/api/field_behavior.proto";
+import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
 // import "protoc-gen-openapiv2/options/annotations.proto"; // openapiv2 спецификация
-// import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
 
 service LOMS {
   rpc OrderCreate(OrderCreateRequest) returns (OrderCreateResponse) {
@@ -48,7 +47,11 @@ service LOMS {
 
 
 message OrderCreateRequest {
-	int64 user_id = 1; 
+  int64 user_id = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
   repeated OrderInfoItem items = 2;
 }
 
@@ -62,7 +65,11 @@ message OrderCreateResponse {
 }
 
 message GetStockInfoRequest{
-  uint32 sku = 1;
+  uint32 sku = 1 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
 }
 
 message GetStockInfoResponse {
@@ -78,11 +85,19 @@ message GetStockInfoErrorResponse {
 }
 
 message CancelOrderRequest {
-	int64 order_id = 1;
+	int64 order_id = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }
 
 message GetOrderInfoRequest {
-	int64 order_id = 1;
+	int64 order_id = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }
 
 message GetOrderInfoResponse {
@@ -92,5 +107,9 @@ message GetOrderInfoResponse {
 }
 
 message OrderPayRequest {
-	int64 order_id = 1;
+	int64 order_id = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
 }

@@ -8,7 +8,6 @@ option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/ap
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto"; 
 import "google/api/field_behavior.proto";
-import "google/protobuf/descriptor.proto";
 import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
 
 // See more: https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/a_bit_of_everything.proto
