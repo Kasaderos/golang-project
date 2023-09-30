@@ -4,18 +4,19 @@ services:
     image: cart
     build: ./cart/
     ports:
-      - "8082:8082"
+      - "8082:8080"
     depends_on:
       - loms
     environment:
       - LOMS_SERVICE_URL=loms:8082
       - PRODUCT_SERVICE_URL=route256.pavl.uk:8082
-      - ADDR=:8082
+      - GRPC_ADDR=:8082
+      - GRPC_GW_ADDR=:8080
   loms:
     image: loms
     build: ./loms/
     ports:
-      - "8083:8082"
+      - "8083:8080"
     environment:
       - ADDR=:8082
   # notification:

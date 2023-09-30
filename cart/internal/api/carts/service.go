@@ -2,18 +2,11 @@ package carts
 
 import (
 	"context"
-	"errors"
-	"route256/cart/internal/clients/product"
 	"route256/cart/internal/models"
 	servicepb "route256/cart/pkg/api/carts/v1"
 
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
-
-const ProductServiceMetaKey = "x-product-service-token"
-
-var ErrProductServiceTokenRequired = errors.New("x-product-service-token required")
 
 type Deps struct {
 	ItemAddService
@@ -69,22 +62,11 @@ type (
 )
 
 func (s Service) ItemAdd(ctx context.Context, req *servicepb.ItemAddRequest) (*emptypb.Empty, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, ErrProductServiceTokenRequired
-	}
-
-	values := md.Get(ProductServiceMetaKey)
-	if len(values) < 1 {
-		return nil, ErrProductServiceTokenRequired
-	}
-	token := values[0]
-
 	if err := s.itemAddService.AddItem(
-		product.WithToken(ctx, token),
-		models.UserID(req.Item.User),
-		models.SKU(req.Item.Sku),
-		uint16(req.Item.Count),
+		ctx,
+		models.UserID(req.User),
+		models.SKU(req.Sku),
+		uint16(req.Count),
 	); err != nil {
 		return nil, err
 	}
@@ -113,19 +95,8 @@ func (s Service) Clear(ctx context.Context, req *servicepb.ClearRequest) (*empty
 }
 
 func (s Service) Checkout(ctx context.Context, req *servicepb.CheckoutRequest) (*servicepb.CheckoutResponse, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, ErrProductServiceTokenRequired
-	}
-
-	values := md.Get(ProductServiceMetaKey)
-	if len(values) < 1 {
-		return nil, ErrProductServiceTokenRequired
-	}
-	token := values[0]
-
 	orderID, err := s.checkoutService.Checkout(
-		product.WithToken(ctx, token),
+		ctx,
 		models.UserID(req.User),
 	)
 	if err != nil {

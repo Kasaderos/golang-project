@@ -8,39 +8,60 @@ option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/ap
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto"; 
 
+// See more: https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/a_bit_of_everything.proto
+// option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+//   info: {
+//     title: "Workshop 2";
+//     version: "1.0.0";
+//   };
+//   schemes: HTTP;
+//   schemes: HTTPS;
+//   consumes: "application/json";
+//   produces: "application/json";
+//   security_definitions: {
+//       security: {
+//           key: "ApiKeyAuth";
+//           value: {
+//             type: TYPE_API_KEY;
+//             in: IN_HEADER;
+//             name: "authorization";
+//           }
+//       }
+//   }
+// };
 
 service Carts {
   rpc ItemAdd(ItemAddRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-        post: "/v1/cart/item/add"
-        body: "item"
+        post: "/cart/item/add"
+        body: "*"
     };
   }
 
   rpc ItemDelete(ItemDeleteRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-        post: "/v1/cart/item/delete"
+        post: "/cart/item/delete"
         body: "*"
     };
   }
 
   rpc Clear(ClearRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-        post: "/v1/cart/clear"
+        post: "/cart/clear"
         body: "*"
     };
   }
 
   rpc Checkout(CheckoutRequest) returns (CheckoutResponse) {
     option (google.api.http) = {
-        post: "/v1/cart/checkout"
+        post: "/cart/checkout"
         body: "*"
     };
   }
 
   rpc List(ListRequest) returns (ListResponse) {
     option (google.api.http) = {
-        post: "/v1/cart/list"
+        post: "/cart/list"
         body: "*"
     };
   }
@@ -48,13 +69,9 @@ service Carts {
 }
 
 message ItemAddRequest {
-    CartItem item = 1;
-}
-
-message CartItem {
-    int64 user = 1;
-    uint32 sku = 2;
-    uint32 count = 3;
+  int64 user = 1;
+  uint32 sku = 2;
+  uint32 count = 3;
 }
 
 message ItemDeleteRequest {
@@ -67,11 +84,11 @@ message ClearRequest {
 }
 
 message CheckoutRequest {
-    int64 user = 1;
+  int64 user = 1;
 }
 
 message CheckoutResponse {
-    int64 order_id = 1;
+  int64 order_id = 1;
 }
 
 message ListRequest {
@@ -79,15 +96,15 @@ message ListRequest {
 }
 
 message ListResponse {
-    repeated ListItem items = 1;
-    uint32 total_price = 2;
+  repeated ListItem items = 1;
+  uint32 total_price = 2;
 }
 
 message ListItem {
-    uint32 sku = 1;
-    uint32 count = 2;
-    string name = 3;
-    uint32 price = 4;
+  uint32 sku = 1;
+  uint32 count = 2;
+  string name = 3;
+  uint32 price = 4;
 }
 
 

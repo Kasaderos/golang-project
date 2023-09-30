@@ -71,7 +71,7 @@ type (
 	}
 )
 
-func (s Service) CreateOrder(ctx context.Context, req *servicepb.OrderCreateRequest) (*servicepb.OrderCreateResponse, error) {
+func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequest) (*servicepb.OrderCreateResponse, error) {
 	items := make([]models.ItemOrderInfo, 0, len(req.Order.Items))
 	for _, item := range req.Order.Items {
 		items = append(items, models.ItemOrderInfo{

@@ -121,7 +121,8 @@ PHONY: .protoc-generate
 	$(PROTOC) -I . -I vendor-proto \
     --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=paths=source_relative:./pkg \
     --plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=paths=source_relative:pkg \
-  	./$(CARTS_PROTO_PATH)/service.proto
+	--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=paths=source_relative:pkg --grpc-gateway_opt logtostderr=true --grpc-gateway_opt generate_unbound_methods=true \
+	./$(CARTS_PROTO_PATH)/service.proto
 	mkdir -p pkg/${PRODUCTS_PROTO_PATH}
 	$(PROTOC) -I ${PRODUCTS_PROTO_PATH} -I vendor-proto \
 	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${PRODUCTS_PROTO_PATH} --go_opt paths=source_relative \
