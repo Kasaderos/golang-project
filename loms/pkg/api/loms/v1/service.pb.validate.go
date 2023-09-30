@@ -57,9 +57,9 @@ func (m *OrderCreateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserId() <= 0 {
+	if m.GetUser() <= 0 {
 		err := OrderCreateRequestValidationError{
-			field:  "UserId",
+			field:  "User",
 			reason: "value must be greater than 0",
 		}
 		if !all {

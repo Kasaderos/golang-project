@@ -68,7 +68,16 @@ func (m *ItemAddRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Sku
+	if m.GetSku() <= 0 {
+		err := ItemAddRequestValidationError{
+			field:  "Sku",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.GetCount() <= 0 {
 		err := ItemAddRequestValidationError{
@@ -181,9 +190,27 @@ func (m *ItemDeleteRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for User
+	if m.GetUser() <= 0 {
+		err := ItemDeleteRequestValidationError{
+			field:  "User",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Sku
+	if m.GetSku() <= 0 {
+		err := ItemDeleteRequestValidationError{
+			field:  "Sku",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ItemDeleteRequestMultiError(errors)
@@ -287,7 +314,16 @@ func (m *ClearRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for User
+	if m.GetUser() <= 0 {
+		err := ClearRequestValidationError{
+			field:  "User",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ClearRequestMultiError(errors)
@@ -388,7 +424,16 @@ func (m *CheckoutRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for User
+	if m.GetUser() <= 0 {
+		err := CheckoutRequestValidationError{
+			field:  "User",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return CheckoutRequestMultiError(errors)
@@ -592,7 +637,16 @@ func (m *ListRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for User
+	if m.GetUser() <= 0 {
+		err := ListRequestValidationError{
+			field:  "User",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ListRequestMultiError(errors)

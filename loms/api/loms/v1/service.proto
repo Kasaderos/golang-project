@@ -47,7 +47,7 @@ service LOMS {
 
 
 message OrderCreateRequest {
-  int64 user_id = 1 [
+  int64 user = 1 [
     (validate.rules).int64 = {
       gt: 0;
     }

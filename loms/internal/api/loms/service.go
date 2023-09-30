@@ -86,7 +86,7 @@ func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequ
 
 	orderID, err := s.orderCreateService.CreateOrder(
 		ctx,
-		models.UserID(req.UserId),
+		models.UserID(req.User),
 		dto.CreateOrderInfo{
 			Items: items,
 		},
