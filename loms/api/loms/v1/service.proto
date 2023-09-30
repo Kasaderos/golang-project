@@ -7,7 +7,6 @@ option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/loms/pkg/ap
 import "google/api/annotations.proto"; // REST описание методов
 import "google/protobuf/empty.proto";
 import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
-// import "protoc-gen-openapiv2/options/annotations.proto"; // openapiv2 спецификация
 
 service LOMS {
   rpc OrderCreate(OrderCreateRequest) returns (OrderCreateResponse) {
