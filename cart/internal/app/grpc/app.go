@@ -11,6 +11,8 @@ import (
 	"route256/cart/internal/services/cart"
 	desc "route256/cart/pkg/api/carts/v1"
 	products_grpc "route256/cart/pkg/api/products/v1"
+	"route256/cart/pkg/middleware/logging"
+	"route256/cart/pkg/middleware/panic"
 	loms_grpc "route256/loms/pkg/api/loms/v1"
 
 	"google.golang.org/grpc"
@@ -62,7 +64,12 @@ func Run() error {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor( // Unary интерсепторы (aka middleware)
+			panic.Interceptor,
+			logging.Interceptor,
+		),
+	)
 
 	reflection.Register(grpcServer)
 

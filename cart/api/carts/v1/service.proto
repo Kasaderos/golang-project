@@ -66,7 +66,6 @@ message ClearRequest {
 	int64 user = 1;
 }
 
-
 message CheckoutRequest {
     int64 user = 1;
 }
