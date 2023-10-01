@@ -14,9 +14,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func initConnections(ctx context.Context) (loms *grpc.ClientConn, products *grpc.ClientConn, err error) {
+func initConnections(
+	ctx context.Context,
+) (lomsConn *grpc.ClientConn, productsConn *grpc.ClientConn, err error) {
 	// Init client connections
-	lomsConn, err := grpc.DialContext(
+	lomsConn, err = grpc.DialContext(
 		ctx,
 		os.Getenv("LOMS_SERVICE_URL"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -25,7 +27,7 @@ func initConnections(ctx context.Context) (loms *grpc.ClientConn, products *grpc
 		return nil, nil, fmt.Errorf("failed to connect to LOMS server: %v", err)
 	}
 
-	productsConn, err := grpc.DialContext(
+	productsConn, err = grpc.DialContext(
 		ctx,
 		os.Getenv("PRODUCT_SERVICE_URL"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -37,11 +39,11 @@ func initConnections(ctx context.Context) (loms *grpc.ClientConn, products *grpc
 	return lomsConn, productsConn, nil
 }
 
-func closeConnections(loms *grpc.ClientConn, products *grpc.ClientConn) {
-	if err := loms.Close(); err != nil {
+func closeConnections(lomsConn *grpc.ClientConn, productsConn *grpc.ClientConn) {
+	if err := lomsConn.Close(); err != nil {
 		log.Println(err)
 	}
-	if err := products.Close(); err != nil {
+	if err := productsConn.Close(); err != nil {
 		log.Println(err)
 	}
 }

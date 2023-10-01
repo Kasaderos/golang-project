@@ -55,9 +55,14 @@ func initGRPCGateway(ctx context.Context, lis net.Listener) (*http.Server, error
 		runtime.WithIncomingHeaderMatcher(auth.HeaderMatcher),
 	)
 
-	if err := desc.RegisterCartsHandlerFromEndpoint(ctx, mux, lis.Addr().String(), []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}); err != nil {
+	if err := desc.RegisterCartsHandlerFromEndpoint(
+		ctx,
+		mux,
+		lis.Addr().String(),
+		[]grpc.DialOption{
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		},
+	); err != nil {
 		return nil, fmt.Errorf("register carts handler: %v", err)
 	}
 
