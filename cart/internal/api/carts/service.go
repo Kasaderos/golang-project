@@ -25,7 +25,7 @@ type Service struct {
 	clearService      ClearService
 }
 
-func NewServer(d Deps) *Service {
+func NewServer(d *Deps) *Service {
 	return &Service{
 		itemAddService:    d.ItemAddService,
 		checkoutService:   d.CheckoutService,

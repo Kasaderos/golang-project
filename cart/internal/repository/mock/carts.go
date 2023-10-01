@@ -5,14 +5,14 @@ import (
 	"route256/cart/internal/models"
 )
 
-type cartRepository struct {
+type CartRepository struct {
 }
 
-func NewCartRepostiory() *cartRepository {
-	return &cartRepository{}
+func NewCartRepostiory() *CartRepository {
+	return &CartRepository{}
 }
 
-func (r *cartRepository) AddItem(
+func (r *CartRepository) AddItem(
 	ctx context.Context,
 	userID models.UserID,
 	item models.CartItem,
@@ -20,14 +20,14 @@ func (r *cartRepository) AddItem(
 	return nil
 }
 
-func (r *cartRepository) GetItemsByUserID(
+func (r *CartRepository) GetItemsByUserID(
 	ctx context.Context,
 	userID models.UserID,
 ) ([]models.CartItem, error) {
 	return []models.CartItem{}, nil
 }
 
-func (r *cartRepository) DeleteItem(
+func (r *CartRepository) DeleteItem(
 	ctx context.Context,
 	userID models.UserID,
 	SKU models.SKU,
@@ -35,7 +35,7 @@ func (r *cartRepository) DeleteItem(
 	return nil
 }
 
-func (r *cartRepository) DeleteItemsByUserID(
+func (r *CartRepository) DeleteItemsByUserID(
 	ctx context.Context,
 	userID models.UserID,
 ) error {
