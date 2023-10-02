@@ -26,8 +26,9 @@ func ToGetStockRequest(sku models.SKU) *loms_v1.GetStockInfoRequest {
 	}
 }
 
-func ToGetProductRequest(sku models.SKU) *products_v1.GetProductRequest {
+func ToGetProductRequest(sku models.SKU, token string) *products_v1.GetProductRequest {
 	return &products_v1.GetProductRequest{
-		Sku: uint32(sku),
+		Sku:   uint32(sku),
+		Token: token,
 	}
 }

@@ -85,6 +85,11 @@
     "productGetProductRequest": {
       "type": "object",
       "properties": {
+        "token": {
+          "type": "string",
+          "default": "testtoken",
+          "description": "Токен для доступа, нужно получить в Телеграмме у преподавателя"
+        },
         "sku": {
           "type": "integer",
           "format": "int64",
@@ -108,6 +113,11 @@
     "productListSkusRequest": {
       "type": "object",
       "properties": {
+        "token": {
+          "type": "string",
+          "default": "testtoken",
+          "description": "Токен для доступа, нужно получить в Телеграмме у преподавателя"
+        },
         "startAfterSku": {
           "type": "integer",
           "format": "int64",

@@ -7,15 +7,11 @@ import (
 	"route256/cart/internal/models"
 	"route256/cart/internal/services/cart"
 	products_v1 "route256/cart/pkg/api/products/v1"
-
-	"google.golang.org/grpc/metadata"
 )
 
 type contextKeyType string
 
 const tokenContextKey = contextKeyType("token")
-
-const ProductServiceMetadataKey = "Authorization"
 
 type Client struct {
 	products_v1.ProductServiceClient
@@ -42,11 +38,7 @@ func getTokenFromContext(ctx context.Context) string {
 }
 
 func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
-	md := metadata.New(nil)
-	md.Set(ProductServiceMetadataKey, getTokenFromContext(ctx))
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
-	req := client_conv.ToGetProductRequest(sku)
+	req := client_conv.ToGetProductRequest(sku, getTokenFromContext(ctx))
 
 	resp, err := c.ProductServiceClient.GetProduct(ctx, req)
 	if err != nil {
