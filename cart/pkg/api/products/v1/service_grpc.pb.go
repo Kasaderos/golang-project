@@ -4,7 +4,10 @@
 // - protoc             v3.21.12
 // source: service.proto
 
-package products
+// To get proto file use
+// grpc-client-cli discover route256.pavl.uk:8082
+
+package product
 
 import (
 	context "context"
@@ -21,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	ProductService_GetProduct_FullMethodName = "/route256.product.ProductService/GetProduct"
+	ProductService_ListSkus_FullMethodName   = "/route256.product.ProductService/ListSkus"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -28,6 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
+	ListSkus(ctx context.Context, in *ListSkusRequest, opts ...grpc.CallOption) (*ListSkusResponse, error)
 }
 
 type productServiceClient struct {
@@ -47,11 +52,21 @@ func (c *productServiceClient) GetProduct(ctx context.Context, in *GetProductReq
 	return out, nil
 }
 
+func (c *productServiceClient) ListSkus(ctx context.Context, in *ListSkusRequest, opts ...grpc.CallOption) (*ListSkusResponse, error) {
+	out := new(ListSkusResponse)
+	err := c.cc.Invoke(ctx, ProductService_ListSkus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
+	ListSkus(context.Context, *ListSkusRequest) (*ListSkusResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -61,6 +76,9 @@ type UnimplementedProductServiceServer struct {
 
 func (UnimplementedProductServiceServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
+}
+func (UnimplementedProductServiceServer) ListSkus(context.Context, *ListSkusRequest) (*ListSkusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSkus not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -93,6 +111,24 @@ func _ProductService_GetProduct_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_ListSkus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSkusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).ListSkus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_ListSkus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).ListSkus(ctx, req.(*ListSkusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -103,6 +139,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProduct",
 			Handler:    _ProductService_GetProduct_Handler,
+		},
+		{
+			MethodName: "ListSkus",
+			Handler:    _ProductService_ListSkus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

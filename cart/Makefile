@@ -59,7 +59,7 @@ PROTOC = PATH="$$PATH:$(LOCAL_BIN)" protoc
 
 
 # Вендоринг внешних proto файлов
-.vendor-proto: vendor-proto/google/api vendor-proto/google/protobuf vendor-proto/protoc-gen-openapiv2/options vendor-proto/validate 
+.vendor-proto: vendor-proto/google/api vendor-proto/google/protobuf vendor-proto/protoc-gen-openapiv2/options vendor-proto/validate
 
 .PHONY: .vendor-rm
 .vendor-rm:
@@ -87,7 +87,7 @@ vendor-proto/protoc-gen-openapiv2/options:
 	mv vendor-proto/grpc-ecosystem/protoc-gen-openapiv2/options vendor-proto/protoc-gen-openapiv2
 	rm -rf vendor-proto/grpc-ecosystem
 
-	
+
 # Устанавливаем proto описания google/protobuf
 vendor-proto/google/protobuf:
 	git clone -b main --single-branch -n --depth=1 --filter=tree:0 \
@@ -116,7 +116,7 @@ PRODUCTS_PROTO_PATH:="api/products/v1"
 
 # Генерация протофайлов с использованием protoc
 PHONY: .protoc-generate
-.protoc-generate: 
+.protoc-generate:
 	mkdir -p pkg/${CARTS_PROTO_PATH}
 	$(PROTOC) -I . -I vendor-proto \
     --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=paths=source_relative:./pkg \
@@ -128,6 +128,7 @@ PHONY: .protoc-generate
 	$(PROTOC) -I ${PRODUCTS_PROTO_PATH} -I vendor-proto \
 	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out pkg/${PRODUCTS_PROTO_PATH} --go_opt paths=source_relative \
 	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out pkg/${PRODUCTS_PROTO_PATH} --go-grpc_opt paths=source_relative \
+	--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out api/openapiv2/ --openapiv2_opt logtostderr=true \
 	$(PRODUCTS_PROTO_PATH)/service.proto
 	go mod tidy
 
@@ -144,6 +145,6 @@ generate-buf: .bin-deps .vendor-rm .buf-generate
 
 # Генерация протофайлов с использованием buf
 .PHONY: .buf-generate
-.buf-generate: 
+.buf-generate:
 	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf mod update
 	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf generate
