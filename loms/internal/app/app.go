@@ -2,17 +2,24 @@ package app
 
 import (
 	"context"
+	"errors"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	mock_repository "route256/loms/internal/repository/mock"
+	"sync"
 	"syscall"
 
 	"google.golang.org/grpc"
 )
 
-func Run() error {
+type App struct {
+	wg sync.WaitGroup
+}
+
+func (app *App) Run() error {
 	// Init global context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -37,9 +44,37 @@ func Run() error {
 
 	go initGracefullShutdown(ctx, cancel, grpcServer, grpcGWServer)
 
-	go startGRPCServer(ctx, grpcServer, lis)
+	go app.StartGRPCServer(ctx, grpcServer, lis)
 
-	return startGRPCGateway(grpcGWServer)
+	startGRPCGateway(grpcGWServer)
+
+	app.Wait()
+
+	return nil
+}
+
+func (app *App) StartGRPCServer(ctx context.Context, grpcServer *grpc.Server, lis net.Listener) {
+	app.wg.Add(1)
+	defer app.wg.Done()
+
+	log.Printf("server listening at %v", lis.Addr())
+
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Printf("failed to serve: %v", err)
+	}
+}
+
+func (app *App) Wait() {
+	app.wg.Wait()
+}
+
+func startGRPCGateway(grcpGateway *http.Server) {
+	log.Printf("Serving gRPC-Gateway on %s\n", grcpGateway.Addr)
+	if err := grcpGateway.ListenAndServe(); err != nil {
+		if !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("failed to serve: %v", err)
+		}
+	}
 }
 
 func initGracefullShutdown(
@@ -51,6 +86,8 @@ func initGracefullShutdown(
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 	<-signalCh
+
+	log.Println("Service gracefull shutdowning")
 
 	cancelGlobalCtx()
 

@@ -6,5 +6,8 @@ import (
 )
 
 func main() {
-	log.Fatal(app.Run())
+	app := new(app.App)
+	if err := app.Run(); err != nil {
+		log.Printf("service exited with err: %v", err)
+	}
 }

@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -42,14 +41,6 @@ func initGRPCServer(services *api.Deps) (*grpc.Server, net.Listener, error) {
 	return grpcServer, lis, nil
 }
 
-func startGRPCServer(ctx context.Context, grpcServer *grpc.Server, lis net.Listener) {
-	log.Printf("server listening at %v", lis.Addr())
-
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Printf("failed to serve: %v", err)
-	}
-}
-
 func initGRPCGateway(ctx context.Context, lis net.Listener) (*http.Server, error) {
 	mux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(auth.HeaderMatcher),
@@ -70,12 +61,4 @@ func initGRPCGateway(ctx context.Context, lis net.Listener) (*http.Server, error
 		Addr:    os.Getenv("GRPC_GW_ADDR"),
 		Handler: logging.WithHTTPLoggingMiddleware(mux),
 	}, nil
-}
-
-func startGRPCGateway(grcpGateway *http.Server) error {
-	log.Printf("Serving gRPC-Gateway on %s\n", grcpGateway.Addr)
-	if err := grcpGateway.ListenAndServe(); err != nil {
-		return err
-	}
-	return nil
 }
