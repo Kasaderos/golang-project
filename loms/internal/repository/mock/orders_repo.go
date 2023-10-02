@@ -9,27 +9,27 @@ import (
 
 const OrderExpiration = time.Minute * 10
 
-type omsRepository struct {
+type OrdersRepository struct {
 }
 
-func NewOMSRepostiory() *omsRepository {
-	return &omsRepository{}
+func NewOMSRepostiory() *OrdersRepository {
+	return &OrdersRepository{}
 }
 
-func (r *omsRepository) CreateOrder(ctx context.Context, order models.Order) (models.OrderID, error) {
+func (r *OrdersRepository) CreateOrder(ctx context.Context, order models.Order) (models.OrderID, error) {
 	return models.OrderID(rand.Int() % 1000), nil
 }
 
-func (r *omsRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (*models.Order, error) {
+func (r *OrdersRepository) GetOrderByID(ctx context.Context, orderID models.OrderID) (*models.Order, error) {
 	return &models.Order{
 		ID: orderID,
 	}, nil
 }
 
-func (r *omsRepository) SetStatus(ctx context.Context, orderID models.OrderID, status models.Status) error {
+func (r *OrdersRepository) SetStatus(ctx context.Context, orderID models.OrderID, status models.Status) error {
 	return nil
 }
 
-func (r *omsRepository) ListExpiredOrders(ctx context.Context, limit uint32) ([]models.OrderID, error) {
+func (r *OrdersRepository) ListExpiredOrders(ctx context.Context, limit uint32) ([]models.OrderID, error) {
 	return []models.OrderID{}, nil
 }

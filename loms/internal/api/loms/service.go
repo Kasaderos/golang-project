@@ -29,7 +29,7 @@ type Deps struct {
 	StockInfoService
 }
 
-func NewServer(d Deps) *Service {
+func NewServer(d *Deps) *Service {
 	return &Service{
 		orderCreateService: d.OrderCreateService,
 		orderInfoService:   d.OrderInfoService,
