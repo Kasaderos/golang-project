@@ -2,8 +2,8 @@ package loms
 
 import (
 	"context"
+	conv "route256/loms/internal/converter/server"
 	"route256/loms/internal/models"
-	dto "route256/loms/internal/services"
 	servicepb "route256/loms/pkg/api/loms/v1"
 
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -55,7 +55,7 @@ type (
 	}
 
 	OrderCreateService interface {
-		CreateOrder(ctx context.Context, userID models.UserID, info dto.CreateOrderInfo) (models.OrderID, error)
+		CreateOrder(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) (models.OrderID, error)
 	}
 
 	OrderPayService interface {
@@ -76,20 +76,12 @@ func (s Service) OrderCreate(ctx context.Context, req *servicepb.OrderCreateRequ
 		return nil, err
 	}
 
-	items := make([]models.ItemOrderInfo, 0, len(req.Items))
-	for _, item := range req.Items {
-		items = append(items, models.ItemOrderInfo{
-			SKU:   models.SKU(item.Sku),
-			Count: uint16(item.Count),
-		})
-	}
+	userID, items := conv.FromOrderCreateRequest(req)
 
 	orderID, err := s.orderCreateService.CreateOrder(
 		ctx,
-		models.UserID(req.User),
-		dto.CreateOrderInfo{
-			Items: items,
-		},
+		userID,
+		items,
 	)
 	if err != nil {
 		return nil, err
@@ -126,6 +118,7 @@ func (c *Service) CancelOrder(ctx context.Context, req *servicepb.CancelOrderReq
 	); err != nil {
 		return nil, err
 	}
+
 	return &emptypb.Empty{}, nil
 }
 
@@ -142,19 +135,7 @@ func (c *Service) GetOrderInfo(ctx context.Context, req *servicepb.GetOrderInfoR
 		return nil, err
 	}
 
-	items := make([]*servicepb.OrderInfoItem, 0, len(order.Items))
-	for _, item := range order.Items {
-		items = append(items, &servicepb.OrderInfoItem{
-			Sku:   int64(item.SKU),
-			Count: uint32(item.Count),
-		})
-	}
-
-	return &servicepb.GetOrderInfoResponse{
-		Status: order.Status.String(),
-		User:   int64(order.UserID),
-		Items:  items,
-	}, nil
+	return conv.ToGetOrderInfoResponse(order), nil
 }
 
 func (c *Service) OrderPay(ctx context.Context, req *servicepb.OrderPayRequest) (*emptypb.Empty, error) {
