@@ -2,6 +2,7 @@ package carts
 
 import (
 	"context"
+	conv "route256/cart/internal/converter/server"
 	"route256/cart/internal/models"
 	servicepb "route256/cart/pkg/api/carts/v1"
 
@@ -129,7 +130,7 @@ func (s Service) List(ctx context.Context, req *servicepb.ListRequest) (*service
 		return nil, err
 	}
 
-	totalPrice, list, err := s.listItemService.ListItem(
+	totalPrice, items, err := s.listItemService.ListItem(
 		ctx,
 		models.UserID(req.User),
 	)
@@ -137,18 +138,5 @@ func (s Service) List(ctx context.Context, req *servicepb.ListRequest) (*service
 		return nil, err
 	}
 
-	items := make([]*servicepb.ListItem, 0, len(list))
-	for _, item := range list {
-		items = append(items, &servicepb.ListItem{
-			Sku:   uint32(item.SKU),
-			Count: uint32(item.Count),
-			Name:  item.Name,
-			Price: item.Price,
-		})
-	}
-
-	return &servicepb.ListResponse{
-		TotalPrice: totalPrice,
-		Items:      items,
-	}, nil
+	return conv.ToListResponse(totalPrice, items), nil
 }
