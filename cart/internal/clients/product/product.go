@@ -44,7 +44,7 @@ func getTokenFromContext(ctx context.Context) string {
 func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
 	md := metadata.New(nil)
 	md.Set(ProductServiceMetadataKey, getTokenFromContext(ctx))
-	metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	req := client_conv.ToGetProductRequest(sku)
 
