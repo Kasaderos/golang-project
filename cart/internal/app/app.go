@@ -18,11 +18,11 @@ func Run() error {
 	defer cancel()
 
 	// Client connections
-	lomsConn, productsConn, err := initConnections(ctx)
+	lomsConn, productsConn, err := initClientConnections(ctx)
 	if err != nil {
 		return err
 	}
-	defer closeConnections(lomsConn, productsConn)
+	defer closeClientConnections(lomsConn, productsConn)
 
 	// Clients
 	lomsClient, productClient := initClients(lomsConn, productsConn)

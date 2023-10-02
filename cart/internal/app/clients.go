@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func initConnections(
+func initClientConnections(
 	ctx context.Context,
 ) (lomsConn *grpc.ClientConn, productsConn *grpc.ClientConn, err error) {
 	// Init client connections
@@ -39,7 +39,7 @@ func initConnections(
 	return lomsConn, productsConn, nil
 }
 
-func closeConnections(lomsConn *grpc.ClientConn, productsConn *grpc.ClientConn) {
+func closeClientConnections(lomsConn *grpc.ClientConn, productsConn *grpc.ClientConn) {
 	if err := lomsConn.Close(); err != nil {
 		log.Println(err)
 	}
