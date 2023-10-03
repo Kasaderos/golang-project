@@ -46,4 +46,3 @@ func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name strin
 
 	return resp.Name, uint32(resp.Price), nil
 }
-
