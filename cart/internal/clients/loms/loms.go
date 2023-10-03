@@ -2,7 +2,6 @@ package loms
 
 import (
 	"context"
-	client_conv "route256/cart/internal/converter/client"
 	"route256/cart/internal/models"
 	loms_v1 "route256/loms/pkg/api/loms/v1"
 )
@@ -20,7 +19,7 @@ func (s *Client) CreateOrder(
 	userID models.UserID,
 	items []models.CartItem,
 ) (models.OrderID, error) {
-	resp, err := s.LOMSClient.OrderCreate(ctx, client_conv.ToOrderCreateRequest(userID, items))
+	resp, err := s.LOMSClient.OrderCreate(ctx, ToOrderCreateRequest(userID, items))
 	if err != nil {
 		return models.OrderID(0), err
 	}
@@ -29,7 +28,7 @@ func (s *Client) CreateOrder(
 }
 
 func (c *Client) GetStock(ctx context.Context, sku models.SKU) (count uint64, err error) {
-	resp, err := c.LOMSClient.GetStockInfo(ctx, client_conv.ToGetStockRequest(sku))
+	resp, err := c.LOMSClient.GetStockInfo(ctx, ToGetStockRequest(sku))
 	if err != nil {
 		return 0, err
 	}

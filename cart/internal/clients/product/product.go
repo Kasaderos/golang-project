@@ -3,7 +3,6 @@ package product
 import (
 	"context"
 	"log"
-	client_conv "route256/cart/internal/converter/client"
 	"route256/cart/internal/models"
 	"route256/cart/internal/services/cart"
 	products_v1 "route256/cart/pkg/api/products/v1"
@@ -38,7 +37,7 @@ func getTokenFromContext(ctx context.Context) string {
 }
 
 func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name string, price uint32, err error) {
-	req := client_conv.ToGetProductRequest(sku, getTokenFromContext(ctx))
+	req := ToGetProductRequest(sku, getTokenFromContext(ctx))
 
 	resp, err := c.ProductServiceClient.GetProduct(ctx, req)
 	if err != nil {
@@ -47,3 +46,4 @@ func (c *Client) GetProductInfo(ctx context.Context, sku models.SKU) (name strin
 
 	return resp.Name, uint32(resp.Price), nil
 }
+

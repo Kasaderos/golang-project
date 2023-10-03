@@ -1,8 +1,7 @@
-package client
+package loms
 
 import (
 	"route256/cart/internal/models"
-	products_v1 "route256/cart/pkg/api/products/v1"
 	loms_v1 "route256/loms/pkg/api/loms/v1"
 )
 
@@ -23,12 +22,5 @@ func ToOrderCreateRequest(userID models.UserID, items []models.CartItem) *loms_v
 func ToGetStockRequest(sku models.SKU) *loms_v1.GetStockInfoRequest {
 	return &loms_v1.GetStockInfoRequest{
 		Sku: uint32(sku),
-	}
-}
-
-func ToGetProductRequest(sku models.SKU, token string) *products_v1.GetProductRequest {
-	return &products_v1.GetProductRequest{
-		Sku:   uint32(sku),
-		Token: token,
 	}
 }
