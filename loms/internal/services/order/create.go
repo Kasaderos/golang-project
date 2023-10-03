@@ -3,7 +3,6 @@ package order
 import (
 	"context"
 	"route256/loms/internal/models"
-	dto "route256/loms/internal/services"
 )
 
 type OrderCreator interface {
@@ -34,11 +33,11 @@ func NewCreateService(d CreateDeps) *CreateService {
 func (usc *CreateService) CreateOrder(
 	ctx context.Context,
 	userID models.UserID,
-	info dto.CreateOrderInfo,
+	items []models.ItemOrderInfo,
 ) (models.OrderID, error) {
 	order := models.Order{
 		UserID: userID,
-		Items:  info.Items,
+		Items:  items,
 	}
 
 	orderID, err := usc.orderCreator.CreateOrder(ctx, order)
@@ -46,7 +45,7 @@ func (usc *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	if err := usc.stocksReserver.ReserveStocks(ctx, userID, info.Items); err != nil {
+	if err := usc.stocksReserver.ReserveStocks(ctx, userID, items); err != nil {
 		return models.OrderID(-1), err
 	}
 

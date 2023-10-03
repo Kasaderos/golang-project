@@ -1,0 +1,120 @@
+
+syntax = "proto3";
+
+package gitlab.ozon.dev.go_8_middle_project.cart.pkg.api.carts.v1;
+
+option go_package = "gitlab.ozon.dev/kb.kaldarov/go-8-middle-project/cart/pkg/api/carts/v1;carts";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto"; 
+import "validate/validate.proto"; // https://github.com/bufbuild/protoc-gen-validate/blob/main/docs.md
+
+
+service Carts {
+  rpc ItemAdd(ItemAddRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/cart/item/add"
+        body: "*"
+    };
+  }
+
+  rpc ItemDelete(ItemDeleteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/cart/item/delete"
+        body: "*"
+    };
+  }
+
+  rpc Clear(ClearRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        post: "/cart/clear"
+        body: "*"
+    };
+  }
+
+  rpc Checkout(CheckoutRequest) returns (CheckoutResponse) {
+    option (google.api.http) = {
+        post: "/cart/checkout"
+        body: "*"
+    };
+  }
+
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+        post: "/cart/list"
+        body: "*"
+    };
+  }
+
+}
+
+message ItemAddRequest {
+  int64 user = 1 [
+    (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+  uint32 sku = 2 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
+  uint32 count = 3 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
+}
+
+message ItemDeleteRequest {
+	int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+	uint32 sku = 2 [
+    (validate.rules).uint32 = {
+      gt: 0;
+    }
+  ];
+}
+
+message ClearRequest {
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+}
+
+message CheckoutRequest {
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+}
+
+message CheckoutResponse {
+  int64 order_id = 1;
+}
+
+message ListRequest {
+  int64 user = 1 [
+   (validate.rules).int64 = {
+      gt: 0;
+    }
+  ];
+}
+
+message ListResponse {
+  repeated ListItem items = 1;
+  uint32 total_price = 2;
+}
+
+message ListItem {
+  uint32 sku = 1;
+  uint32 count = 2;
+  string name = 3;
+  uint32 price = 4;
+}

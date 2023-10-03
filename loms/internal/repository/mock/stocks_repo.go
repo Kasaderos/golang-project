@@ -5,14 +5,14 @@ import (
 	"route256/loms/internal/models"
 )
 
-type stocksRepository struct {
+type StocksRepository struct {
 }
 
-func NewStocksRepostiory() *stocksRepository {
-	return &stocksRepository{}
+func NewStocksRepostiory() *StocksRepository {
+	return &StocksRepository{}
 }
 
-func (r *stocksRepository) ReserveStocks(
+func (r *StocksRepository) ReserveStocks(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.ItemOrderInfo,
@@ -20,7 +20,7 @@ func (r *stocksRepository) ReserveStocks(
 	return nil
 }
 
-func (r *stocksRepository) ReserveRemove(
+func (r *StocksRepository) ReserveRemove(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.ItemOrderInfo,
@@ -28,7 +28,7 @@ func (r *stocksRepository) ReserveRemove(
 	return nil
 }
 
-func (r *stocksRepository) ReserveCancel(
+func (r *StocksRepository) ReserveCancel(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.ItemOrderInfo,
@@ -36,7 +36,7 @@ func (r *stocksRepository) ReserveCancel(
 	return nil
 }
 
-func (r *stocksRepository) GetStockBySKU(
+func (r *StocksRepository) GetStockBySKU(
 	ctx context.Context,
 	SKU models.SKU,
 ) (count uint64, err error) {

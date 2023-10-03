@@ -2,9 +2,12 @@ package main
 
 import (
 	"log"
-	http_app "route256/loms/internal/app/http"
+	"route256/loms/internal/app"
 )
 
 func main() {
-	log.Fatal(http_app.Run())
+	app := new(app.App)
+	if err := app.Run(); err != nil {
+		log.Printf("service exited with err: %v", err)
+	}
 }

@@ -1,0 +1,176 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ProductService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/get_product": {
+      "post": {
+        "operationId": "ProductService_GetProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/productGetProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/productGetProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/list_skus": {
+      "post": {
+        "operationId": "ProductService_ListSkus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/productListSkusResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/productListSkusRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "productGetProductRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "default": "testtoken",
+          "description": "Токен для доступа, нужно получить в Телеграмме у преподавателя"
+        },
+        "sku": {
+          "type": "integer",
+          "format": "int64",
+          "default": "773297411",
+          "description": "Уникальный id товара"
+        }
+      }
+    },
+    "productGetProductResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "productListSkusRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "default": "testtoken",
+          "description": "Токен для доступа, нужно получить в Телеграмме у преподавателя"
+        },
+        "startAfterSku": {
+          "type": "integer",
+          "format": "int64",
+          "default": "0",
+          "description": "Начиная с какой sku выводить список (сама sku не включается в список)"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64",
+          "default": "100",
+          "description": "Количество sku, которые надо вернуть"
+        }
+      }
+    },
+    "productListSkusResponse": {
+      "type": "object",
+      "properties": {
+        "skus": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
