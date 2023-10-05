@@ -20,10 +20,11 @@ services:
     environment:
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
+
   # databases
-  pgbouncer:
+  loms-pgbouncer:
     image: edoburu/pgbouncer
-    container_name: go-8-pgbouncer
+    container_name: loms-pgbouncer
     ports:
       - "6432:6432"
     environment:
@@ -31,20 +32,26 @@ services:
       - DB_PASSWORD=passwd
       - DB_HOST=loms-db
       - DB_NAME=postgres
+      - LISTEN_ADDR=*
+      - LISTEN_PORT=6432
+      - ADMIN_USERS=postgres
+      - POOL_MODE=transaction
+      # In some cases md5 not work
+      - AUTH_TYPE=plain
+    depends_on:
+      - loms-db
 
   loms-db:
     image: postgres:16.0
-    hostname: loms-db
     container_name: loms-db
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passwd
-      PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passwd
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - ./.docker/postgresql/data:/var/lib/postgresql/data
+
   # notification:
   #   image: notification
   #   build: ./notification
