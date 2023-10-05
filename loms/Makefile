@@ -57,6 +57,7 @@ PROTOC = PATH="$$PATH:$(LOCAL_BIN)" protoc
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest && \
 	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@latest && \
 	GOBIN=$(LOCAL_BIN) go install github.com/bufbuild/buf/cmd/buf@v1.21.0
+	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@latest
 
 
 # Вендоринг внешних proto файлов
@@ -134,12 +135,13 @@ generate: .bin-deps .vendor-proto .protoc-generate
 .PHONY: fast-generate
 fast-generate: .protoc-generate
 
-# Генерация протофайлов с использованием buf
-PHONY: generate-buf
-generate-buf: .bin-deps .vendor-rm .buf-generate
 
-# Генерация протофайлов с использованием buf
-.PHONY: .buf-generate
-.buf-generate: 
-	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf mod update
-	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf generate
+MIGRATE:=goose
+MIGRATE_DATABASE_DRIVER=postgres
+MIGRATE_DATABASE_HOST=localhost
+MIGRATE_DATABASE_PORT=5432
+MIGRATE_DATABASE_URL=postgresql://postgres:passwd@$(MIGRATE_DATABASE_HOST):$(MIGRATE_DATABASE_PORT)/postgres?sslmode=disable
+
+.PHONY: migrate
+migrate:
+	$(MIGRATE) -dir migrations -table migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) up

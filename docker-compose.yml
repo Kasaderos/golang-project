@@ -20,6 +20,30 @@ services:
     environment:
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
+  # databases
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: go-8-pgbouncer
+    ports:
+      - "6432:6432"
+    volumes:
+      - ./pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./userlist.txt:/etc/pgbouncer/userlist.txt
+    restart: always
+
+  loms-db:
+    image: postgres:16.0
+    hostname: loms-db
+    container_name: loms-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passwd
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker/postgresql/data:/var/lib/postgresql/data
   # notification:
   #   image: notification
   #   build: ./notification
