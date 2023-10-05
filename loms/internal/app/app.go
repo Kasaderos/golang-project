@@ -8,11 +8,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	mock_repository "route256/loms/internal/repository/mock"
 	"sync"
 	"syscall"
 
 	"google.golang.org/grpc"
+
+	mock_repository "route256/loms/internal/repository/mock"
 )
 
 type App struct {
