@@ -35,8 +35,9 @@ services:
       - LISTEN_ADDR=*
       - LISTEN_PORT=6432
       - ADMIN_USERS=postgres
-      - POOL_MODE=transaction
-      # In some cases md5 not work
+      # in this mode goose down doesn't work correct
+      # - POOL_MODE=transaction
+      # In some cases md5 not work, can't auth
       - AUTH_TYPE=plain
     depends_on:
       - loms-db

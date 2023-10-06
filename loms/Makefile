@@ -58,10 +58,10 @@ PROTOC = PATH="$$PATH:$(LOCAL_BIN)" protoc
 	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@latest && \
 	GOBIN=$(LOCAL_BIN) go install github.com/bufbuild/buf/cmd/buf@v1.21.0
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@latest
-
+ 	GOBIN=$(LOCAL_BIN) go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 # Вендоринг внешних proto файлов
-.vendor-proto: vendor-proto/google/api vendor-proto/google/protobuf vendor-proto/protoc-gen-openapiv2/options vendor-proto/validate 
+.vendor-proto: vendor-proto/google/api vendor-proto/google/protobuf vendor-proto/protoc-gen-openapiv2/options vendor-proto/validate
 
 .PHONY: .vendor-rm
 .vendor-rm:
@@ -89,7 +89,7 @@ vendor-proto/protoc-gen-openapiv2/options:
 	mv vendor-proto/grpc-ecosystem/protoc-gen-openapiv2/options vendor-proto/protoc-gen-openapiv2
 	rm -rf vendor-proto/grpc-ecosystem
 
-	
+
 # Устанавливаем proto описания google/protobuf
 vendor-proto/google/protobuf:
 	git clone -b main --single-branch -n --depth=1 --filter=tree:0 \
@@ -117,7 +117,7 @@ LOMS_PROTO_PATH:="api/loms/v1"
 
 # Генерация протофайлов с использованием protoc
 PHONY: .protoc-generate
-.protoc-generate: 
+.protoc-generate:
 	mkdir -p pkg/${LOMS_PROTO_PATH}
 	$(PROTOC) -I . -I vendor-proto \
     --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=paths=source_relative:./pkg \
@@ -126,7 +126,7 @@ PHONY: .protoc-generate
 	--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:pkg" \
   	./$(LOMS_PROTO_PATH)/service.proto
 	go mod tidy
-	
+
 
 # Генерация протофайлов с использованием protoc
 PHONY: generate
@@ -139,9 +139,13 @@ fast-generate: .protoc-generate
 MIGRATE:=goose
 MIGRATE_DATABASE_DRIVER=postgres
 MIGRATE_DATABASE_HOST=localhost
-MIGRATE_DATABASE_PORT=5432
-MIGRATE_DATABASE_URL=postgresql://postgres:passwd@$(MIGRATE_DATABASE_HOST):$(MIGRATE_DATABASE_PORT)/postgres?sslmode=disable
+MIGRATE_DATABASE_PORT=6432
+MIGRATE_DATABASE_URL="postgresql://postgres:passwd@$(MIGRATE_DATABASE_HOST):$(MIGRATE_DATABASE_PORT)/postgres?sslmode=disable"
 
 .PHONY: migrate
 migrate:
-	$(MIGRATE) -dir migrations -table migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) up
+	$(MIGRATE) -dir migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) up
+
+.PHONY: reset_migrations
+reset_migrations:
+	$(MIGRATE) -dir migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) reset
