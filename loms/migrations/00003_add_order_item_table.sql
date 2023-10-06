@@ -3,7 +3,7 @@
 CREATE TABLE order_item
 (
   order_id bigint REFERENCES user_order(id),
-  sku int,
+  sku bigint,
   count int
 );
 -- +goose StatementEnd

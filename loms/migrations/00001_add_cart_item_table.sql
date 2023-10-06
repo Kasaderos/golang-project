@@ -3,7 +3,7 @@
 CREATE TABLE cart_item
 (
   user_id bigint,
-  sku int,
+  sku bigint,
   name text,
   price int,
   count int

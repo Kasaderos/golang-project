@@ -23,7 +23,7 @@ insert into cart_item (
 
 type AddCartItemParams struct {
 	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int4 `json:"sku"`
+	Sku    pgtype.Int8 `json:"sku"`
 	Name   pgtype.Text `json:"name"`
 	Price  pgtype.Int4 `json:"price"`
 	Count  pgtype.Int4 `json:"count"`
