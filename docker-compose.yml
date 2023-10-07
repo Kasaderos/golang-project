@@ -64,7 +64,7 @@ services:
     environment:
       - DB_USER=postgres
       - DB_PASSWORD=passwd
-      - DB_HOST=loms-db
+      - DB_HOST=cart-db
       - DB_NAME=postgres
       - LISTEN_ADDR=*
       - LISTEN_PORT=7432
