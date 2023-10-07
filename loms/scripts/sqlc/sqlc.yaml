@@ -1,13 +1,24 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "./cart_item.sql"
+    queries: "./order.sql"
     schema: "../../migrations"
     gen:
       go:
-        package: "cart"
+        package: "order"
         sql_package: "pgx/v5"
-        out: "./cart/item"
+        out: "../../internal/repository/postgres/order"
+        emit_json_tags: true
+        emit_interface: true
+        omit_unused_structs: true
+  - engine: "postgresql"
+    queries: "./stock.sql"
+    schema: "../../migrations"
+    gen:
+      go:
+        package: "stock"
+        sql_package: "pgx/v5"
+        out: "../../internal/repository/postgres/stock"
         emit_json_tags: true
         emit_interface: true
         omit_unused_structs: true
