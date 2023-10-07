@@ -136,7 +136,7 @@ generate: .bin-deps .vendor-proto .protoc-generate
 fast-generate: .protoc-generate
 
 
-MIGRATE:=goose
+MIGRATE:=$(LOCAL_BIN)/goose
 MIGRATE_DATABASE_DRIVER=postgres
 MIGRATE_DATABASE_HOST=localhost
 MIGRATE_DATABASE_PORT=6432

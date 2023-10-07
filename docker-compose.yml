@@ -6,13 +6,14 @@ services:
     ports:
       - "8082:8080"
     depends_on:
+      - cart-pgbouncer
       - loms
     environment:
       - LOMS_SERVICE_URL=loms:8082
       - PRODUCT_SERVICE_URL=route256.pavl.uk:8082
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
-      - DATABASE_DSN=postgresql://postgres:passwd@localhost:7432/postgres?sslmode=disable
+      - DATABASE_DSN=postgresql://postgres:passwd@cart-pgbouncer:6432/postgres
 
   loms:
     image: loms
@@ -22,7 +23,9 @@ services:
     environment:
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
-      - DATABASE_DSN=postgresql://postgres:passwd@localhost:6432/postgres?sslmode=disable
+      - DATABASE_DSN=postgresql://postgres:passwd@loms-pgbouncer:6432/postgres
+    depends_on:
+      - loms-pgbouncer
 
   # databases
   loms-pgbouncer:
@@ -67,7 +70,7 @@ services:
       - DB_HOST=cart-db
       - DB_NAME=postgres
       - LISTEN_ADDR=*
-      - LISTEN_PORT=7432
+      - LISTEN_PORT=6432
       - ADMIN_USERS=postgres
       # in this mode goose down doesn't work correct
       # - POOL_MODE=transaction

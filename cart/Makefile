@@ -150,7 +150,7 @@ generate-buf: .bin-deps .vendor-rm .buf-generate
 	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf mod update
 	PATH=$(LOCAL_BIN):$(PATH) $(LOCAL_BIN)/buf generate
 
-MIGRATE:=goose
+MIGRATE:=$(LOCAL_BIN)/goose
 MIGRATE_DATABASE_DRIVER=postgres
 MIGRATE_DATABASE_HOST=localhost
 MIGRATE_DATABASE_PORT=7432
