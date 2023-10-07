@@ -10,7 +10,7 @@ type OrderStatusSetter interface {
 }
 
 type ReserveRemover interface {
-	ReserveRemove(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	ReserveRemove(ctx context.Context, userID models.UserID) error
 }
 
 type PayService struct {
@@ -42,7 +42,7 @@ func (usc *PayService) MarkAsPaid(
 		return err
 	}
 
-	if err := usc.reserveRemover.ReserveRemove(ctx, order.UserID, order.Items); err != nil {
+	if err := usc.reserveRemover.ReserveRemove(ctx, order.UserID); err != nil {
 		return err
 	}
 

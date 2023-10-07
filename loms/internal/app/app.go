@@ -13,7 +13,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	mock_repository "route256/loms/internal/repository/mock"
+	"route256/loms/internal/repository/postgres"
 )
 
 type App struct {
@@ -25,9 +25,15 @@ func (app *App) Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	dbpool, err := getDBConnPool(ctx)
+	if err != nil {
+		return err
+	}
+	defer dbpool.Close()
+
 	// Repository
-	ordersRepo := mock_repository.NewOMSRepostiory()
-	stocksRepo := mock_repository.NewStocksRepostiory()
+	ordersRepo := postgres.NewOrdersRepostiory(dbpool)
+	stocksRepo := postgres.NewStocksRepostiory(dbpool)
 
 	// Services
 	services := initServices(ordersRepo, stocksRepo)
