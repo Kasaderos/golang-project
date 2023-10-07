@@ -8,12 +8,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"route256/loms/internal/repository/postgres"
 	"sync"
 	"syscall"
 
 	"google.golang.org/grpc"
-
-	"route256/loms/internal/repository/postgres"
 )
 
 type App struct {

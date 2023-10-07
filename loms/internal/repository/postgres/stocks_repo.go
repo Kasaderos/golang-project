@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"route256/loms/internal/models"
-
 	sqlc "route256/loms/internal/repository/postgres/stock"
 
 	"github.com/jackc/pgx/v5/pgtype"
