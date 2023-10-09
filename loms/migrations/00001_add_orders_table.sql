@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE user_order
+CREATE TABLE orders
 (
   id      bigserial PRIMARY KEY,
   user_id bigint,
@@ -10,5 +10,5 @@ CREATE TABLE user_order
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE user_order CASCADE;
+DROP TABLE orders CASCADE;
 -- +goose StatementEnd

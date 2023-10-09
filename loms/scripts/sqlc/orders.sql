@@ -1,5 +1,5 @@
 -- name: CreateOrder :one
-INSERT INTO user_order (
+INSERT INTO orders (
     user_id,
     status
 ) VALUES ($1, $2)
@@ -13,9 +13,9 @@ INSERT INTO order_item (
 ) VALUES ($1, $2, $3);
 
 -- name: GetOrderByID :one
-SELECT * FROM user_order WHERE id = $1;
+SELECT * FROM orders WHERE id = $1;
 
 -- name: SetStatus :exec
-update user_order 
+update orders 
 set status = $1
 where id = $2;

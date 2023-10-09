@@ -1,13 +1,13 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "./order.sql"
+    queries: "./orders.sql"
     schema: "../../migrations"
     gen:
       go:
-        package: "order"
+        package: "orders"
         sql_package: "pgx/v5"
-        out: "../../internal/repository/postgres/order"
+        out: "../../internal/repository/postgres/orders"
         emit_json_tags: true
         emit_interface: true
         omit_unused_structs: true
