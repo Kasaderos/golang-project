@@ -1,7 +1,7 @@
 -- name: CreateOrder :one
 INSERT INTO orders (
     user_id,
-    status
+    status_id
 ) VALUES ($1, $2)
 RETURNING id;
 
@@ -17,5 +17,5 @@ SELECT * FROM orders WHERE id = $1;
 
 -- name: SetStatus :exec
 update orders 
-set status = $1
+set status_id = $1
 where id = $2;

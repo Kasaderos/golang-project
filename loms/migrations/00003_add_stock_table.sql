@@ -2,8 +2,9 @@
 -- +goose StatementBegin
 CREATE TABLE stock 
 (
-  sku bigint,
-  count bigint
+  sku      bigint not null,
+  count    bigint not null,
+  reserved bigint default 0 not null
 );
 -- +goose StatementEnd
 

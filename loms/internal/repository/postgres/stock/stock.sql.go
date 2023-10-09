@@ -7,100 +7,66 @@ package stock
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const countReservedStocksBySKU = `-- name: CountReservedStocksBySKU :one
-select sum(count) from reserved_stock
+const getBySKU = `-- name: GetBySKU :one
+select count - reserved from stock
 where sku = $1
 `
 
-func (q *Queries) CountReservedStocksBySKU(ctx context.Context, sku pgtype.Int8) (int64, error) {
-	row := q.db.QueryRow(ctx, countReservedStocksBySKU, sku)
-	var sum int64
-	err := row.Scan(&sum)
-	return sum, err
+func (q *Queries) GetBySKU(ctx context.Context, sku int64) (int32, error) {
+	row := q.db.QueryRow(ctx, getBySKU, sku)
+	var column_1 int32
+	err := row.Scan(&column_1)
+	return column_1, err
 }
 
-const countStocksBySKU = `-- name: CountStocksBySKU :one
-select count from stock
-where sku = $1
+const reserveCancel = `-- name: ReserveCancel :exec
+update stock 
+set count = count + $1,
+    reserved = reserved - $1
+where reserved >= $1 and sku = $2
 `
 
-func (q *Queries) CountStocksBySKU(ctx context.Context, sku pgtype.Int8) (pgtype.Int8, error) {
-	row := q.db.QueryRow(ctx, countStocksBySKU, sku)
-	var count pgtype.Int8
-	err := row.Scan(&count)
-	return count, err
+type ReserveCancelParams struct {
+	Count int64 `json:"count"`
+	Sku   int64 `json:"sku"`
 }
 
-const deleteReservedStockByUserID = `-- name: DeleteReservedStockByUserID :exec
-delete from reserved_stock 
-where user_id = $1
-`
-
-func (q *Queries) DeleteReservedStockByUserID(ctx context.Context, userID pgtype.Int8) error {
-	_, err := q.db.Exec(ctx, deleteReservedStockByUserID, userID)
+func (q *Queries) ReserveCancel(ctx context.Context, arg ReserveCancelParams) error {
+	_, err := q.db.Exec(ctx, reserveCancel, arg.Count, arg.Sku)
 	return err
 }
 
-const getReservedStockByUsedID = `-- name: GetReservedStockByUsedID :many
-select user_id, sku, count from reserved_stock
-where user_id = $1
-`
-
-func (q *Queries) GetReservedStockByUsedID(ctx context.Context, userID pgtype.Int8) ([]ReservedStock, error) {
-	rows, err := q.db.Query(ctx, getReservedStockByUsedID, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ReservedStock
-	for rows.Next() {
-		var i ReservedStock
-		if err := rows.Scan(&i.UserID, &i.Sku, &i.Count); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const removeStocks = `-- name: RemoveStocks :exec
+const reserveRemove = `-- name: ReserveRemove :exec
 update stock
-set count = count - $1
+set reserved = reserved - $1
 where sku = $2
 `
 
-type RemoveStocksParams struct {
-	Count pgtype.Int8 `json:"count"`
-	Sku   pgtype.Int8 `json:"sku"`
+type ReserveRemoveParams struct {
+	Reserved int64 `json:"reserved"`
+	Sku      int64 `json:"sku"`
 }
 
-func (q *Queries) RemoveStocks(ctx context.Context, arg RemoveStocksParams) error {
-	_, err := q.db.Exec(ctx, removeStocks, arg.Count, arg.Sku)
+func (q *Queries) ReserveRemove(ctx context.Context, arg ReserveRemoveParams) error {
+	_, err := q.db.Exec(ctx, reserveRemove, arg.Reserved, arg.Sku)
 	return err
 }
 
 const reserveStock = `-- name: ReserveStock :exec
-insert into reserved_stock (
-    user_id,
-    sku,
-    count
-) VALUES ($1, $2, $3)
+update stock 
+set count = count - $1,
+    reserved = reserved + $1
+where count >= $1 and sku = $2
 `
 
 type ReserveStockParams struct {
-	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int8 `json:"sku"`
-	Count  pgtype.Int8 `json:"count"`
+	Count int64 `json:"count"`
+	Sku   int64 `json:"sku"`
 }
 
 func (q *Queries) ReserveStock(ctx context.Context, arg ReserveStockParams) error {
-	_, err := q.db.Exec(ctx, reserveStock, arg.UserID, arg.Sku, arg.Count)
+	_, err := q.db.Exec(ctx, reserveStock, arg.Count, arg.Sku)
 	return err
 }

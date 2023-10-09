@@ -1,27 +1,20 @@
 -- name: ReserveStock :exec
-insert into reserved_stock (
-    user_id,
-    sku,
-    count
-) VALUES ($1, $2, $3);
+update stock 
+set count = count - $1,
+    reserved = reserved + $1
+where count >= $1 and sku = $2;
 
--- name: GetReservedStockByUsedID :many
-select * from reserved_stock
-where user_id = $1;
-
--- name: RemoveStocks :exec
+-- name: ReserveRemove :exec
 update stock
-set count = count - $1
+set reserved = reserved - $1
 where sku = $2;
 
--- name: DeleteReservedStockByUserID :exec
-delete from reserved_stock 
-where user_id = $1;
+-- name: ReserveCancel :exec
+update stock 
+set count = count + $1,
+    reserved = reserved - $1
+where reserved >= $1 and sku = $2;
 
--- name: CountStocksBySKU :one
-select count from stock
-where sku = $1;
-
--- name: CountReservedStocksBySKU :one
-select sum(count) from reserved_stock
+-- name: GetBySKU :one
+select count - reserved from stock
 where sku = $1;

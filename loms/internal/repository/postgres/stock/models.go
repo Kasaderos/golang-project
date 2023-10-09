@@ -4,12 +4,4 @@
 
 package stock
 
-import (
-	"github.com/jackc/pgx/v5/pgtype"
-)
-
-type ReservedStock struct {
-	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int8 `json:"sku"`
-	Count  pgtype.Int8 `json:"count"`
-}
+import ()

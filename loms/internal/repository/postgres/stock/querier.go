@@ -6,16 +6,12 @@ package stock
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
-	CountReservedStocksBySKU(ctx context.Context, sku pgtype.Int8) (int64, error)
-	CountStocksBySKU(ctx context.Context, sku pgtype.Int8) (pgtype.Int8, error)
-	DeleteReservedStockByUserID(ctx context.Context, userID pgtype.Int8) error
-	GetReservedStockByUsedID(ctx context.Context, userID pgtype.Int8) ([]ReservedStock, error)
-	RemoveStocks(ctx context.Context, arg RemoveStocksParams) error
+	GetBySKU(ctx context.Context, sku int64) (int32, error)
+	ReserveCancel(ctx context.Context, arg ReserveCancelParams) error
+	ReserveRemove(ctx context.Context, arg ReserveRemoveParams) error
 	ReserveStock(ctx context.Context, arg ReserveStockParams) error
 }
 
