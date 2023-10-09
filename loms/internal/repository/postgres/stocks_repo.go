@@ -108,7 +108,6 @@ func (r *StocksRepository) ReserveRemove(
 func (r *StocksRepository) ReserveCancel(
 	ctx context.Context,
 	userID models.UserID,
-	items []models.ItemOrderInfo,
 ) error {
 	tx, err := r.dbpool.Begin(ctx)
 	if err != nil {

@@ -35,7 +35,7 @@ func (usc *CancelService) CancelOrder(ctx context.Context, orderID models.OrderI
 		return err
 	}
 
-	if err := usc.reserveCanceller.ReserveCancel(ctx, order.UserID, order.Items); err != nil {
+	if err := usc.reserveCanceller.ReserveCancel(ctx, order.UserID); err != nil {
 		return err
 	}
 
