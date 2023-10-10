@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"route256/cart/internal/models"
@@ -10,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var ErrNoUserItems = errors.New("no user items")
 
 type CartRepository struct {
 	dbpool *pgxpool.Pool
@@ -66,6 +69,10 @@ func (r *CartRepository) GetItemsByUserID(
 	rItems, err := q.GetItemsByUserID(ctx, int64(userID))
 	if err != nil {
 		return nil, fmt.Errorf("get items by user: %w", err)
+	}
+
+	if len(rItems) < 1 {
+		return nil, ErrNoUserItems
 	}
 
 	items := make([]models.CartItem, 0, len(rItems))
