@@ -39,8 +39,8 @@ func (r *StocksRepository) ReserveStocks(
 
 	for _, item := range items {
 		if err := q.ReserveStock(ctx, sqlc.ReserveStockParams{
-			Count: item.Count,
-			Sku:   item.SKU,
+			Count: int64(item.Count),
+			Sku:   int64(item.SKU),
 		}); err != nil {
 			return fmt.Errorf("reserve stock: %w", err)
 		}
@@ -68,8 +68,8 @@ func (r *StocksRepository) ReserveRemove(
 
 	for _, item := range items {
 		if err := q.ReserveRemove(ctx, sqlc.ReserveRemoveParams{
-			Reserved: stock.Count,
-			Sku:      stock.Sku,
+			TotalReserved: int64(item.Count),
+			Sku:           int64(item.SKU),
 		}); err != nil {
 			return fmt.Errorf("reserve remove: %w", err)
 		}
@@ -97,8 +97,8 @@ func (r *StocksRepository) ReserveCancel(
 
 	for _, item := range items {
 		if err := q.ReserveCancel(ctx, sqlc.ReserveCancelParams{
-			Count: stock.Count,
-			Sku:   stock.Sku,
+			Count: int64(item.Count),
+			Sku:   int64(item.SKU),
 		}); err != nil {
 			return fmt.Errorf("reserve remove: %w", err)
 		}
@@ -109,8 +109,8 @@ func (r *StocksRepository) ReserveCancel(
 
 func (r *StocksRepository) GetStocksBySKU(
 	ctx context.Context,
-	SKU models.SKU,
-) (count uint64, err error) {
+	sku models.SKU,
+) (uint64, error) {
 	tx, err := r.dbpool.Begin(ctx)
 	if err != nil {
 		return 0, err
@@ -129,4 +129,5 @@ func (r *StocksRepository) GetStocksBySKU(
 		return 0, err
 	}
 
+	return uint64(count), nil
 }
