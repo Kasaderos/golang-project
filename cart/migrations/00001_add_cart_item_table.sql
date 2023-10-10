@@ -2,12 +2,12 @@
 -- +goose StatementBegin
 CREATE TABLE cart_item
 (
-  user_id bigint,
-  sku bigint,
-  name text,
-  price int,
-  count int,
-  created_at  timestamptz default now() not null
+  user_id     bigint,
+  sku         bigint,
+  price       int,
+  amount      int,
+  created_at  timestamptz default now() not null,
+  constraint  id primary key (user_id, sku)
 );
 
 CREATE INDEX idx_user_id ON cart_item(user_id);

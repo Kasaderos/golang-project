@@ -9,9 +9,9 @@ import (
 )
 
 type CartItem struct {
-	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int8 `json:"sku"`
-	Name   pgtype.Text `json:"name"`
-	Price  pgtype.Int4 `json:"price"`
-	Count  pgtype.Int4 `json:"count"`
+	UserID    int64              `json:"user_id"`
+	Sku       int64              `json:"sku"`
+	Price     pgtype.Int4        `json:"price"`
+	Amount    pgtype.Int4        `json:"amount"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }

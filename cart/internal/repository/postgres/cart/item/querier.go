@@ -6,15 +6,13 @@ package cart
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
 	AddCartItem(ctx context.Context, arg AddCartItemParams) error
 	DeleteItem(ctx context.Context, arg DeleteItemParams) error
-	DeleteItemByUser(ctx context.Context, userID pgtype.Int8) error
-	GetItemsByUserID(ctx context.Context, userID pgtype.Int8) ([]CartItem, error)
+	DeleteItemByUser(ctx context.Context, userID int64) error
+	GetItemsByUserID(ctx context.Context, userID int64) ([]CartItem, error)
 }
 
 var _ Querier = (*Queries)(nil)

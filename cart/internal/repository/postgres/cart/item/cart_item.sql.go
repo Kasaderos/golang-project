@@ -15,39 +15,36 @@ const addCartItem = `-- name: AddCartItem :exec
 insert into cart_item (
     user_id,
     sku,
-    name,
     price,
-    count
-) VALUES ($1, $2, $3, $4, $5)
+    amount
+) VALUES ($1, $2, $3, $4)
 `
 
 type AddCartItemParams struct {
-	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int8 `json:"sku"`
-	Name   pgtype.Text `json:"name"`
+	UserID int64       `json:"user_id"`
+	Sku    int64       `json:"sku"`
 	Price  pgtype.Int4 `json:"price"`
-	Count  pgtype.Int4 `json:"count"`
+	Amount pgtype.Int4 `json:"amount"`
 }
 
 func (q *Queries) AddCartItem(ctx context.Context, arg AddCartItemParams) error {
 	_, err := q.db.Exec(ctx, addCartItem,
 		arg.UserID,
 		arg.Sku,
-		arg.Name,
 		arg.Price,
-		arg.Count,
+		arg.Amount,
 	)
 	return err
 }
 
 const deleteItem = `-- name: DeleteItem :exec
-delete from cart_item 
+delete from cart_item
 where user_id = $1 and sku = $2
 `
 
 type DeleteItemParams struct {
-	UserID pgtype.Int8 `json:"user_id"`
-	Sku    pgtype.Int8 `json:"sku"`
+	UserID int64 `json:"user_id"`
+	Sku    int64 `json:"sku"`
 }
 
 func (q *Queries) DeleteItem(ctx context.Context, arg DeleteItemParams) error {
@@ -56,21 +53,21 @@ func (q *Queries) DeleteItem(ctx context.Context, arg DeleteItemParams) error {
 }
 
 const deleteItemByUser = `-- name: DeleteItemByUser :exec
-delete from cart_item 
+delete from cart_item
 where user_id = $1
 `
 
-func (q *Queries) DeleteItemByUser(ctx context.Context, userID pgtype.Int8) error {
+func (q *Queries) DeleteItemByUser(ctx context.Context, userID int64) error {
 	_, err := q.db.Exec(ctx, deleteItemByUser, userID)
 	return err
 }
 
 const getItemsByUserID = `-- name: GetItemsByUserID :many
-select user_id, sku, name, price, count from cart_item 
+select user_id, sku, price, amount, created_at from cart_item
 where user_id = $1
 `
 
-func (q *Queries) GetItemsByUserID(ctx context.Context, userID pgtype.Int8) ([]CartItem, error) {
+func (q *Queries) GetItemsByUserID(ctx context.Context, userID int64) ([]CartItem, error) {
 	rows, err := q.db.Query(ctx, getItemsByUserID, userID)
 	if err != nil {
 		return nil, err
@@ -82,9 +79,9 @@ func (q *Queries) GetItemsByUserID(ctx context.Context, userID pgtype.Int8) ([]C
 		if err := rows.Scan(
 			&i.UserID,
 			&i.Sku,
-			&i.Name,
 			&i.Price,
-			&i.Count,
+			&i.Amount,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
