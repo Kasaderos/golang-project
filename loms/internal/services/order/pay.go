@@ -42,7 +42,7 @@ func (usc *PayService) MarkAsPaid(
 		return err
 	}
 
-	if err := usc.reserveRemover.ReserveRemove(ctx, order.UserID); err != nil {
+	if err := usc.reserveRemover.ReserveRemove(ctx, order.Items); err != nil {
 		return err
 	}
 

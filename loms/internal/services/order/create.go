@@ -45,7 +45,7 @@ func (usc *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	if err := usc.stocksReserver.ReserveStocks(ctx, userID, items); err != nil {
+	if err := usc.stocksReserver.ReserveStocks(ctx, items); err != nil {
 		return models.OrderID(-1), err
 	}
 
