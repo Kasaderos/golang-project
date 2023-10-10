@@ -9,7 +9,7 @@ func ToOrderCreateRequest(userID models.UserID, items []models.CartItem) *loms_v
 	reqItems := make([]*loms_v1.OrderInfoItem, 0, len(items))
 	for _, item := range items {
 		reqItems = append(reqItems, &loms_v1.OrderInfoItem{
-			Sku:   int64(item.Count),
+			Sku:   int64(item.SKU),
 			Count: uint32(item.Count),
 		})
 	}
