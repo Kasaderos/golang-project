@@ -10,15 +10,15 @@ import (
 )
 
 const getBySKU = `-- name: GetBySKU :one
-select available - total_reserved from stock
+select available from stock
 where sku = $1
 `
 
-func (q *Queries) GetBySKU(ctx context.Context, sku int64) (int32, error) {
+func (q *Queries) GetBySKU(ctx context.Context, sku int64) (int64, error) {
 	row := q.db.QueryRow(ctx, getBySKU, sku)
-	var column_1 int32
-	err := row.Scan(&column_1)
-	return column_1, err
+	var available int64
+	err := row.Scan(&available)
+	return available, err
 }
 
 const reserveCancel = `-- name: ReserveCancel :exec

@@ -17,5 +17,5 @@ set available = available + $1,
 where sku = $2;
 
 -- name: GetBySKU :one
-select available - total_reserved from stock
+select available from stock
 where sku = $1;

@@ -9,7 +9,7 @@ import (
 )
 
 type Querier interface {
-	GetBySKU(ctx context.Context, sku int64) (int32, error)
+	GetBySKU(ctx context.Context, sku int64) (int64, error)
 	ReserveCancel(ctx context.Context, arg ReserveCancelParams) error
 	ReserveRemove(ctx context.Context, arg ReserveRemoveParams) error
 	ReserveStock(ctx context.Context, arg ReserveStockParams) (int64, error)
