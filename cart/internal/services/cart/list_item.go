@@ -39,7 +39,7 @@ func (c ListService) ListItem(
 		items[i].Name = name
 		items[i].Price = price
 
-		totalPrice += price
+		totalPrice += price * uint32(item.Count)
 	}
 
 	return totalPrice, items, nil
