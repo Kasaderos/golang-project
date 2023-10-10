@@ -10,7 +10,7 @@ type OrderCreator interface {
 }
 
 type StocksReserver interface {
-	ReserveStocks(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	ReserveStocks(ctx context.Context, items []models.ItemOrderInfo) error
 }
 
 type CreateService struct {

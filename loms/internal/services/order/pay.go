@@ -10,7 +10,7 @@ type OrderStatusSetter interface {
 }
 
 type ReserveRemover interface {
-	ReserveRemove(ctx context.Context, userID models.UserID) error
+	ReserveRemove(ctx context.Context, items []models.ItemOrderInfo) error
 }
 
 type PayService struct {

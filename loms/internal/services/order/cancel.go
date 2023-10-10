@@ -6,7 +6,7 @@ import (
 )
 
 type ReserveCanceller interface {
-	ReserveCancel(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	ReserveCancel(ctx context.Context, items []models.ItemOrderInfo) error
 }
 
 type CancelService struct {
@@ -35,7 +35,7 @@ func (usc *CancelService) CancelOrder(ctx context.Context, orderID models.OrderI
 		return err
 	}
 
-	if err := usc.reserveCanceller.ReserveCancel(ctx, order.UserID); err != nil {
+	if err := usc.reserveCanceller.ReserveCancel(ctx, order.Items); err != nil {
 		return err
 	}
 
