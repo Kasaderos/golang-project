@@ -22,12 +22,14 @@ type CreateService struct {
 type CreateDeps struct {
 	OrderCreator
 	StocksReserver
+	OrderStatusSetter
 }
 
 func NewCreateService(d CreateDeps) *CreateService {
 	return &CreateService{
-		orderCreator:   d.OrderCreator,
-		stocksReserver: d.StocksReserver,
+		orderCreator:      d.OrderCreator,
+		stocksReserver:    d.StocksReserver,
+		orderStatusSetter: d.OrderStatusSetter,
 	}
 }
 

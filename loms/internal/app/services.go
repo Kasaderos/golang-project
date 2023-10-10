@@ -12,8 +12,9 @@ func initServices(
 	stocksRepo *postgres.StocksRepository,
 ) *api.Deps {
 	orderCreateService := order.NewCreateService(order.CreateDeps{
-		OrderCreator:   ordersRepo,
-		StocksReserver: stocksRepo,
+		OrderCreator:      ordersRepo,
+		StocksReserver:    stocksRepo,
+		OrderStatusSetter: ordersRepo,
 	})
 	orderInfoService := order.NewGetInfoService(ordersRepo)
 	orderPayService := order.NewPayService(order.PayDeps{
