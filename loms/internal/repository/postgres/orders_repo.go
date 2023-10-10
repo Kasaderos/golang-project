@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"route256/loms/internal/models"
-	sqlc "route256/loms/internal/repository/postgres/order"
+	sqlc "route256/loms/internal/repository/postgres/orders"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -43,9 +43,9 @@ func (r *OrdersRepository) CreateOrder(
 			Int64: int64(order.UserID),
 			Valid: true,
 		},
-		Status: pgtype.Text{
-			String: order.Status.String(),
-			Valid:  true,
+		StatusID: pgtype.Int4{
+			Int32: int32(order.Status),
+			Valid: true,
 		},
 	})
 	if err != nil {
@@ -87,7 +87,7 @@ func (r *OrdersRepository) GetOrderByID(
 	return &models.Order{
 		ID:     orderID,
 		UserID: models.UserID(orderID),
-		Status: models.GetStatus(order.Status.String),
+		Status: models.Status(order.StatusID.Int32),
 	}, nil
 }
 
@@ -110,9 +110,9 @@ func (r *OrdersRepository) SetStatus(
 	q = q.WithTx(tx)
 	if err := q.SetStatus(ctx, sqlc.SetStatusParams{
 		ID: int64(orderID),
-		Status: pgtype.Text{
-			String: status.String(),
-			Valid:  true,
+		StatusID: pgtype.Int4{
+			Int32: int32(status),
+			Valid: true,
 		},
 	}); err != nil {
 		return err
