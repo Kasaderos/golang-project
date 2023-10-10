@@ -14,8 +14,9 @@ type StocksReserver interface {
 }
 
 type CreateService struct {
-	orderCreator   OrderCreator
-	stocksReserver StocksReserver
+	orderCreator      OrderCreator
+	stocksReserver    StocksReserver
+	orderStatusSetter OrderStatusSetter
 }
 
 type CreateDeps struct {
@@ -37,6 +38,7 @@ func (usc *CreateService) CreateOrder(
 ) (models.OrderID, error) {
 	order := models.Order{
 		UserID: userID,
+		Status: models.StatusNew,
 		Items:  items,
 	}
 
@@ -46,6 +48,21 @@ func (usc *CreateService) CreateOrder(
 	}
 
 	if err := usc.stocksReserver.ReserveStocks(ctx, items); err != nil {
+		if err := usc.orderStatusSetter.SetStatus(
+			ctx,
+			orderID,
+			models.StatusFailed,
+		); err != nil {
+			return models.OrderID(-1), err
+		}
+		return models.OrderID(-1), err
+	}
+
+	if err := usc.orderStatusSetter.SetStatus(
+		ctx,
+		orderID,
+		models.StatusAwaitingPayment,
+	); err != nil {
 		return models.OrderID(-1), err
 	}
 
