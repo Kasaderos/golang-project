@@ -6,7 +6,8 @@ CREATE TABLE cart_item
   sku bigint,
   name text,
   price int,
-  count int
+  count int,
+  created_at  timestamptz default now() not null
 );
 
 CREATE INDEX idx_user_id ON cart_item(user_id);

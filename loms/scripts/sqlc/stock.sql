@@ -1,8 +1,9 @@
--- name: ReserveStock :exec
+-- name: ReserveStock :one
 update stock 
-set count = count - $1,
+set available = available - $1,
     total_reserved = total_reserved + $1
-where sku = $2;
+where sku = $2
+returning available;
 
 -- name: ReserveRemove :exec
 update stock
@@ -11,10 +12,10 @@ where sku = $2;
 
 -- name: ReserveCancel :exec
 update stock 
-set count = count + $1,
+set available = available + $1,
     total_reserved = total_reserved - $1
 where sku = $2;
 
 -- name: GetBySKU :one
-select count - total_reserved from stock
+select available - total_reserved from stock
 where sku = $1;

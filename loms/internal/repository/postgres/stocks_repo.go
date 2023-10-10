@@ -38,11 +38,12 @@ func (r *StocksRepository) ReserveStocks(
 	q = q.WithTx(tx)
 
 	for _, item := range items {
-		if err := q.ReserveStock(ctx, sqlc.ReserveStockParams{
-			Count: int64(item.Count),
-			Sku:   int64(item.SKU),
-		}); err != nil {
-			return fmt.Errorf("reserve stock: %w", err)
+		available, err := q.ReserveStock(ctx, sqlc.ReserveStockParams{
+			Available: int64(item.Count),
+			Sku:       int64(item.SKU),
+		})
+		if err != nil {
+			return fmt.Errorf("reserve stock: %w, sku=%d, available=%d", err, item.SKU, available)
 		}
 	}
 
@@ -97,8 +98,8 @@ func (r *StocksRepository) ReserveCancel(
 
 	for _, item := range items {
 		if err := q.ReserveCancel(ctx, sqlc.ReserveCancelParams{
-			Count: int64(item.Count),
-			Sku:   int64(item.SKU),
+			Available: int64(item.Count),
+			Sku:       int64(item.SKU),
 		}); err != nil {
 			return fmt.Errorf("reserve remove: %w", err)
 		}

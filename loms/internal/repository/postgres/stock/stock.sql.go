@@ -10,7 +10,7 @@ import (
 )
 
 const getBySKU = `-- name: GetBySKU :one
-select count - total_reserved from stock
+select available - total_reserved from stock
 where sku = $1
 `
 
@@ -23,18 +23,18 @@ func (q *Queries) GetBySKU(ctx context.Context, sku int64) (int32, error) {
 
 const reserveCancel = `-- name: ReserveCancel :exec
 update stock 
-set count = count + $1,
+set available = available + $1,
     total_reserved = total_reserved - $1
 where sku = $2
 `
 
 type ReserveCancelParams struct {
-	Count int64 `json:"count"`
-	Sku   int64 `json:"sku"`
+	Available int64 `json:"available"`
+	Sku       int64 `json:"sku"`
 }
 
 func (q *Queries) ReserveCancel(ctx context.Context, arg ReserveCancelParams) error {
-	_, err := q.db.Exec(ctx, reserveCancel, arg.Count, arg.Sku)
+	_, err := q.db.Exec(ctx, reserveCancel, arg.Available, arg.Sku)
 	return err
 }
 
@@ -54,19 +54,22 @@ func (q *Queries) ReserveRemove(ctx context.Context, arg ReserveRemoveParams) er
 	return err
 }
 
-const reserveStock = `-- name: ReserveStock :exec
+const reserveStock = `-- name: ReserveStock :one
 update stock 
-set count = count - $1,
+set available = available - $1,
     total_reserved = total_reserved + $1
 where sku = $2
+returning available
 `
 
 type ReserveStockParams struct {
-	Count int64 `json:"count"`
-	Sku   int64 `json:"sku"`
+	Available int64 `json:"available"`
+	Sku       int64 `json:"sku"`
 }
 
-func (q *Queries) ReserveStock(ctx context.Context, arg ReserveStockParams) error {
-	_, err := q.db.Exec(ctx, reserveStock, arg.Count, arg.Sku)
-	return err
+func (q *Queries) ReserveStock(ctx context.Context, arg ReserveStockParams) (int64, error) {
+	row := q.db.QueryRow(ctx, reserveStock, arg.Available, arg.Sku)
+	var available int64
+	err := row.Scan(&available)
+	return available, err
 }

@@ -12,7 +12,7 @@ type Querier interface {
 	GetBySKU(ctx context.Context, sku int64) (int32, error)
 	ReserveCancel(ctx context.Context, arg ReserveCancelParams) error
 	ReserveRemove(ctx context.Context, arg ReserveRemoveParams) error
-	ReserveStock(ctx context.Context, arg ReserveStockParams) error
+	ReserveStock(ctx context.Context, arg ReserveStockParams) (int64, error)
 }
 
 var _ Querier = (*Queries)(nil)
