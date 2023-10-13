@@ -3,6 +3,7 @@ package cart
 import (
 	"context"
 	"fmt"
+
 	"route256/cart/internal/models"
 )
 
@@ -38,8 +39,13 @@ func NewAddService(d AddDeps) *AddService {
 	}
 }
 
-func (c AddService) AddItem(ctx context.Context, userID models.UserID, sku models.SKU, count uint16) error {
-	_, _, err := c.productProvider.GetProductInfo(ctx, sku)
+func (c AddService) AddItem(
+	ctx context.Context,
+	userID models.UserID,
+	sku models.SKU,
+	count uint16,
+) error {
+	name, price, err := c.productProvider.GetProductInfo(ctx, sku)
 	if err != nil {
 		return fmt.Errorf("product service: %w", err)
 	}
@@ -56,5 +62,7 @@ func (c AddService) AddItem(ctx context.Context, userID models.UserID, sku model
 	return c.itemAdder.AddItem(ctx, userID, models.CartItem{
 		SKU:   sku,
 		Count: count,
+		Name:  name,
+		Price: price,
 	})
 }

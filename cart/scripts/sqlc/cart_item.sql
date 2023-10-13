@@ -7,9 +7,9 @@ insert into cart_item (
 ) VALUES ($1, $2, $3, $4)
 on conflict on constraint id
 do update
-set amount = amount + $4,
+set amount = EXCLUDED.amount + $4,
     price = $3
-where user_id = $1 and sku = $2;
+where EXCLUDED.user_id = $1 and EXCLUDED.sku = $2;
 
 -- name: DeleteItem :exec
 delete from cart_item
