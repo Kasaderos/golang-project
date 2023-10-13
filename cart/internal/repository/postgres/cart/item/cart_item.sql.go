@@ -20,9 +20,9 @@ insert into cart_item (
 ) VALUES ($1, $2, $3, $4)
 on conflict on constraint id
 do update
-set amount = amount + $1,
-    price = $2
-where user_id = $3 and sku = $4
+set amount = amount + $4,
+    price = $3
+where user_id = $1 and sku = $2
 `
 
 type AddCartItemParams struct {
