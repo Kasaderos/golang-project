@@ -4,7 +4,12 @@ insert into cart_item (
     sku,
     price,
     amount
-) VALUES ($1, $2, $3, $4);
+) VALUES ($1, $2, $3, $4)
+on conflict on constraint id
+do update
+set amount = amount + $1,
+    price = $2
+where user_id = $3 and sku = $4;
 
 -- name: DeleteItem :exec
 delete from cart_item
