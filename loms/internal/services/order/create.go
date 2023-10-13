@@ -10,23 +10,26 @@ type OrderCreator interface {
 }
 
 type StocksReserver interface {
-	ReserveStocks(ctx context.Context, userID models.UserID, items []models.ItemOrderInfo) error
+	ReserveStocks(ctx context.Context, items []models.ItemOrderInfo) error
 }
 
 type CreateService struct {
-	orderCreator   OrderCreator
-	stocksReserver StocksReserver
+	orderCreator      OrderCreator
+	stocksReserver    StocksReserver
+	orderStatusSetter OrderStatusSetter
 }
 
 type CreateDeps struct {
 	OrderCreator
 	StocksReserver
+	OrderStatusSetter
 }
 
 func NewCreateService(d CreateDeps) *CreateService {
 	return &CreateService{
-		orderCreator:   d.OrderCreator,
-		stocksReserver: d.StocksReserver,
+		orderCreator:      d.OrderCreator,
+		stocksReserver:    d.StocksReserver,
+		orderStatusSetter: d.OrderStatusSetter,
 	}
 }
 
@@ -37,6 +40,7 @@ func (usc *CreateService) CreateOrder(
 ) (models.OrderID, error) {
 	order := models.Order{
 		UserID: userID,
+		Status: models.StatusNew,
 		Items:  items,
 	}
 
@@ -45,7 +49,22 @@ func (usc *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	if err := usc.stocksReserver.ReserveStocks(ctx, userID, items); err != nil {
+	if err := usc.stocksReserver.ReserveStocks(ctx, items); err != nil {
+		if err := usc.orderStatusSetter.SetStatus(
+			ctx,
+			orderID,
+			models.StatusFailed,
+		); err != nil {
+			return models.OrderID(-1), err
+		}
+		return models.OrderID(-1), err
+	}
+
+	if err := usc.orderStatusSetter.SetStatus(
+		ctx,
+		orderID,
+		models.StatusAwaitingPayment,
+	); err != nil {
 		return models.OrderID(-1), err
 	}
 

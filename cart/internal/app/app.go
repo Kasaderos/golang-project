@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	mock_repo "route256/cart/internal/repository/mock"
+	"route256/cart/internal/repository/postgres"
 	"sync"
 	"syscall"
 
@@ -34,8 +34,14 @@ func (app *App) Run() error {
 	// Clients
 	lomsClient, productClient := initClients(lomsConn, productsConn)
 
+	dbpool, err := getDBConnPool(ctx)
+	if err != nil {
+		return err
+	}
+	defer dbpool.Close()
+
 	// Repository
-	cartRepo := mock_repo.NewCartRepostiory()
+	cartRepo := postgres.NewCartRepostiory(dbpool)
 
 	// Services
 	services := initServices(lomsClient, productClient, cartRepo)

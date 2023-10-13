@@ -40,6 +40,7 @@ service LOMS {
   rpc GetStockInfo(GetStockInfoRequest) returns (GetStockInfoResponse) {
     option (google.api.http) = {
     post: "/stock/info"
+      body: "*"
     };
   }
 }

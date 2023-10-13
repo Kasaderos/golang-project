@@ -18,6 +18,7 @@ var ErrProductServiceTokenRequired = errors.New("X-Product-Service-Token require
 var (
 	needProductServiceTokenMethods = map[string]struct{}{
 		servicepb.Carts_ItemAdd_FullMethodName: {},
+		servicepb.Carts_List_FullMethodName:    {},
 	}
 )
 

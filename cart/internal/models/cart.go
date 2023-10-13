@@ -7,8 +7,8 @@ type Cart struct {
 
 type CartItem struct {
 	SKU   SKU
-	Count uint16
 	Name  string
+	Count uint16
 	Price uint32
 }
 

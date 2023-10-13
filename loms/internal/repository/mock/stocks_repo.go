@@ -23,7 +23,6 @@ func (r *StocksRepository) ReserveStocks(
 func (r *StocksRepository) ReserveRemove(
 	ctx context.Context,
 	userID models.UserID,
-	items []models.ItemOrderInfo,
 ) error {
 	return nil
 }
@@ -36,7 +35,7 @@ func (r *StocksRepository) ReserveCancel(
 	return nil
 }
 
-func (r *StocksRepository) GetStockBySKU(
+func (r *StocksRepository) GetStocksBySKU(
 	ctx context.Context,
 	SKU models.SKU,
 ) (count uint64, err error) {
