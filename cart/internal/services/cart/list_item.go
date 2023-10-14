@@ -44,7 +44,7 @@ func (c ListService) ListItem(
 	// we might cache price and name by skus
 	// and just update cache in separate goroutine
 	totalPrice := uint32(0)
-	wp := workerpool.New(ctx, c.maxWorkers)
+	wp, ctx := workerpool.New(ctx, c.maxWorkers)
 	for i, item := range items {
 		i := i
 		wp.Run(func() error {
