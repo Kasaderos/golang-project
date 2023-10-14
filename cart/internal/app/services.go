@@ -24,7 +24,12 @@ func initServices(
 		ItemsDeleter:  cartRepo,
 	})
 	itemDeleteService := cart.NewItemDeleteService(cartRepo)
-	listItemService := cart.NewListItemService(cartRepo, productClient)
+
+	listItemService := cart.NewListItemService(
+		cartRepo,
+		productClient,
+		getMaxListItemWorkers(),
+	)
 	clearService := cart.NewClearService(cartRepo)
 
 	return &api.Deps{
@@ -34,4 +39,12 @@ func initServices(
 		ListItemService:   listItemService,
 		ClearService:      clearService,
 	}
+}
+
+func getMaxListItemWorkers() int {
+	//value := os.Getenv("MAX_LIST_ITEM_WORKERS")
+	//if len(value) < 1 {
+	//	return 1
+	//}
+	return 1
 }

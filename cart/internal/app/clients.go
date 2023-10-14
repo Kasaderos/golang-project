@@ -8,6 +8,7 @@ import (
 	"route256/cart/internal/clients/loms"
 	"route256/cart/internal/clients/product"
 	products_grpc "route256/cart/pkg/api/products/v1"
+	rate "route256/cart/pkg/middleware/rate"
 	loms_grpc "route256/loms/pkg/api/loms/v1"
 
 	"google.golang.org/grpc"
@@ -27,10 +28,12 @@ func initClientConnections(
 		return nil, nil, fmt.Errorf("failed to connect to LOMS server: %v", err)
 	}
 
+	limiter := rate.New(10, 1)
 	productsConn, err = grpc.DialContext(
 		ctx,
 		os.Getenv("PRODUCT_SERVICE_URL"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(limiter.RequestInterceptor),
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to connect to Products server: %v", err)
