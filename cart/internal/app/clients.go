@@ -10,6 +10,7 @@ import (
 	products_grpc "route256/cart/pkg/api/products/v1"
 	rate "route256/cart/pkg/middleware/rate"
 	loms_grpc "route256/loms/pkg/api/loms/v1"
+	"strconv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -28,7 +29,7 @@ func initClientConnections(
 		return nil, nil, fmt.Errorf("failed to connect to LOMS server: %v", err)
 	}
 
-	limiter := rate.New(10, 1)
+	limiter := rate.New(getProductServiceRPS())
 	productsConn, err = grpc.DialContext(
 		ctx,
 		os.Getenv("PRODUCT_SERVICE_URL"),
@@ -62,4 +63,15 @@ func initClients(
 	productClient := product.NewClient(grpcProductsClient)
 
 	return lomsClient, productClient
+}
+
+func getProductServiceRPS() int {
+	const defaultRPS = 10
+	value := os.Getenv("PRODUCT_SERVICE_RPS")
+	rps, err := strconv.Atoi(value)
+	if err != nil {
+		log.Println("config: product service rate limiter unset, using default 10 RPS")
+		return defaultRPS
+	}
+	return rps
 }
