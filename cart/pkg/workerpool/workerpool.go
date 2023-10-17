@@ -121,6 +121,7 @@ func (wp *WorkerPool) worker() {
 			// we didn't get any job
 			// so let's quit and stop goroutine
 			<-wp.activeWorkers
+			return
 		}
 	}
 }
