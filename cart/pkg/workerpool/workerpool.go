@@ -4,19 +4,28 @@ import (
 	"context"
 	"runtime"
 	"sync"
+	"time"
 )
+
+const WorkerWaitTimeout = 100 * time.Microsecond
+
+type signal struct{}
+type worker struct{}
+
+type job struct {
+	accepted chan signal
+	f        func() error
+}
 
 // WorkerPool is some of kind of errgroup
 type WorkerPool struct {
-	wg      sync.WaitGroup
-	err     error
-	errOnce sync.Once
-	jobs    chan func() error
-	ctx     context.Context
-	cancel  context.CancelFunc
-
-	size int64
-	cur  int64
+	wg            sync.WaitGroup
+	err           error
+	errOnce       sync.Once
+	jobs          chan job
+	ctx           context.Context
+	cancel        context.CancelFunc
+	activeWorkers chan worker
 }
 
 // New is constructor of WorkerPool.
@@ -24,10 +33,10 @@ type WorkerPool struct {
 func New(ctx context.Context, size int) (*WorkerPool, context.Context) {
 	ctx, cancel := context.WithCancel(ctx)
 	return &WorkerPool{
-		jobs:   make(chan func() error, 1),
-		ctx:    ctx,
-		cancel: cancel,
-		size:   int64(size),
+		jobs:          make(chan job, 1),
+		ctx:           ctx,
+		cancel:        cancel,
+		activeWorkers: make(chan worker, size),
 	}, ctx
 }
 
@@ -42,17 +51,28 @@ func (wp *WorkerPool) Run(f func() error) {
 	default:
 	}
 
-	// check if size is reached
-	if wp.cur < wp.size {
-		wp.cur++
-		wp.wg.Add(1)
-		go wp.worker()
+	jb := job{
+		accepted: make(chan signal, 1),
+		f:        f,
 	}
 
-	// block if we can push some job or just stop by ctx
-	// it can be push the f once randomly, although we have ctx.Done.
 	select {
-	case wp.jobs <- f:
+	case wp.jobs <- jb:
+		// try to activate worker
+		select {
+		case <-jb.accepted:
+			// some worker accepted
+		case wp.activeWorkers <- worker{}:
+			// worker size isn't reached
+			// we can run a new worker
+			// there are two scenarios:
+			// scenario 1:
+			//  it started and it got the job
+			// scenario 2:
+			//  it started, but another worker got job
+			wp.wg.Add(1)
+			go wp.worker()
+		}
 	case <-wp.ctx.Done():
 	}
 }
@@ -61,15 +81,25 @@ func (wp *WorkerPool) Run(f func() error) {
 // we can add recovery, but it will be too difficult ...
 func (wp *WorkerPool) worker() {
 	defer wp.wg.Done()
+	retry := true
 	for {
+		// check context
 		select {
 		case <-wp.ctx.Done():
 			return
-		case job, ok := <-wp.jobs:
-			if !ok {
+		default:
+		}
+
+		// try to get some job
+		select {
+		case job, hasJob := <-wp.jobs:
+			if !hasJob {
 				return
 			}
-			if err := job(); err != nil {
+			// send signal that we accepted the job
+			job.accepted <- signal{}
+
+			if err := job.f(); err != nil {
 				wp.errOnce.Do(func() {
 					wp.err = err
 					// it's bad idea to cancel itself,
@@ -79,6 +109,18 @@ func (wp *WorkerPool) worker() {
 				})
 			}
 			runtime.Gosched()
+			retry = true
+		default:
+			// if we don't get a job we quit after some timeout
+			if retry {
+				time.Sleep(WorkerWaitTimeout)
+				retry = false
+				continue
+			}
+
+			// we didn't get any job
+			// so let's quit and stop goroutine
+			<-wp.activeWorkers
 		}
 	}
 }
