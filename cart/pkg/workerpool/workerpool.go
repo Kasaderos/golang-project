@@ -7,7 +7,9 @@ import (
 	"time"
 )
 
-const WorkerWaitTimeout = 100 * time.Microsecond
+// WorkerTTL is timeout for obtaining the next job
+// After this timeout worker will stop
+const WorkerTTL = 100 * time.Microsecond
 
 type signal struct{}
 type worker struct{}
@@ -81,6 +83,8 @@ func (wp *WorkerPool) Run(f func() error) {
 // we can add recovery, but it will be too difficult ...
 func (wp *WorkerPool) worker() {
 	defer wp.wg.Done()
+	// instead time.After I decided to use flag
+	// try to get some job after
 	retry := true
 	for {
 		// check context
@@ -111,14 +115,14 @@ func (wp *WorkerPool) worker() {
 			runtime.Gosched()
 			retry = true
 		default:
-			// if we don't get a job we quit after some timeout
+			// retry get a job after WorkerTTL
 			if retry {
-				time.Sleep(WorkerWaitTimeout)
+				time.Sleep(WorkerTTL)
 				retry = false
 				continue
 			}
 
-			// we didn't get any job
+			// we didn't get any job after retry
 			// so let's quit and stop goroutine
 			<-wp.activeWorkers
 			return
