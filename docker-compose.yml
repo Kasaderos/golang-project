@@ -14,6 +14,8 @@ services:
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
       - DATABASE_DSN=postgresql://postgres:passwd@cart-pgbouncer:6432/postgres
+      - LIST_ITEM_SERVICE_WORKERS=2
+      - PRODUCT_SERVICE_RPS=10
 
   loms:
     image: loms
