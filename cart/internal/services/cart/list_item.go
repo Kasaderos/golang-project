@@ -47,6 +47,7 @@ func (c ListService) ListItem(
 	wp, ctx := workerpool.New(ctx, c.maxWorkers)
 	for i, item := range items {
 		i := i
+		item := item
 		wp.Run(func() error {
 			name, price, err := c.productProvider.GetProductInfo(ctx, item.SKU)
 			if err != nil {
