@@ -5,12 +5,10 @@ package cart
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"route256/cart/internal/models"
+	"route256/cart/internal/services"
 )
-
-var ErrNotEnoughStocks = errors.New("not enough stocks")
 
 type ProductProvider interface {
 	GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
@@ -61,7 +59,7 @@ func (c AddService) AddItem(
 	}
 
 	if uint64(count) > stockCount {
-		return fmt.Errorf("add item: %w, %d > %d", ErrNotEnoughStocks, count, stockCount)
+		return fmt.Errorf("add item: %w, %d > %d", services.ErrNotEnoughStocks, count, stockCount)
 	}
 
 	return c.itemAdder.AddItem(ctx, userID, models.CartItem{

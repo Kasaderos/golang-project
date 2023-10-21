@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"route256/cart/internal/models"
+	"route256/cart/internal/services"
 	"route256/cart/internal/services/cart/mock"
 	"testing"
 
@@ -66,7 +67,8 @@ func TestCart_ItemAdd(t *testing.T) {
 		sku    models.SKU
 		count  uint16
 
-		errAssert require.ErrorAssertionFunc
+		wantServiceError error
+		errAssert        require.ErrorAssertionFunc
 	}{
 		{
 			name:                "not found product by sku",
@@ -102,7 +104,8 @@ func TestCart_ItemAdd(t *testing.T) {
 			sku:    sku,
 			count:  bigProductCount,
 
-			errAssert: require.Error,
+			wantServiceError: services.ErrNotEnoughStocks,
+			errAssert:        require.Error,
 		},
 		{
 			name:                "success",
@@ -133,6 +136,11 @@ func TestCart_ItemAdd(t *testing.T) {
 				tt.count,
 			)
 			tt.errAssert(t, err)
+
+			if tt.wantServiceError != nil {
+				var serviceErr *services.CartServiceError
+				require.ErrorAs(t, err, &serviceErr)
+			}
 		})
 	}
 	t.Cleanup(func() {
