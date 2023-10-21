@@ -164,6 +164,10 @@ migrate:
 reset_migrations:
 	$(MIGRATE) -dir migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) reset
 
+.PHONY: go_generate
+go_generate:
+	go generate ./...
+
 .PHONY: test_coverage
 test_coverage:
 	go test ./... -count=1 -cover -coverprofile cover.out

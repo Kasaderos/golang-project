@@ -59,9 +59,9 @@ func TestCart_ItemAdd(t *testing.T) {
 
 	tests := []struct {
 		name                string
-		productProviderMock *mock.ProductProviderMock
-		stockProviderMock   *mock.StockProviderMock
-		itemAdderMock       *mock.ItemAdderMock
+		productProviderMock ProductProvider
+		stockProviderMock   StockProvider
+		itemAdderMock       ItemAdder
 
 		userID models.UserID
 		sku    models.SKU

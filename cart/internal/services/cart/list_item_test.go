@@ -72,8 +72,8 @@ func TestCart_ListItem(t *testing.T) {
 
 	tests := []struct {
 		name                string
-		productProviderMock *mock.ProductProviderMock
-		itemsProviderMock   *mock.ItemsProviderMock
+		productProviderMock ProductProvider
+		itemsProviderMock   ItemsProvider
 
 		userID     models.UserID
 		maxWorkers int
