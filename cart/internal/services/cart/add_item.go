@@ -1,10 +1,16 @@
 package cart
 
+//go:generate mkdir -p mock
+//go:generate minimock -o ./mock/ -s .go -g
+
 import (
 	"context"
+	"errors"
 	"fmt"
 	"route256/cart/internal/models"
 )
+
+var ErrNotEnoughStocks = errors.New("not enough stocks")
 
 type ProductProvider interface {
 	GetProductInfo(cxt context.Context, sku models.SKU) (name string, price uint32, err error)
@@ -55,7 +61,7 @@ func (c AddService) AddItem(
 	}
 
 	if uint64(count) > stockCount {
-		return fmt.Errorf("add item: not enough stocks, %d > %d", count, stockCount)
+		return fmt.Errorf("add item: %w, %d > %d", ErrNotEnoughStocks, count, stockCount)
 	}
 
 	return c.itemAdder.AddItem(ctx, userID, models.CartItem{

@@ -4,3 +4,4 @@ bin/
 .docker/
 *.swp
 *.curl
+*.out

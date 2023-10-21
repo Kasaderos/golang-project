@@ -163,3 +163,13 @@ migrate:
 .PHONY: reset_migrations
 reset_migrations:
 	$(MIGRATE) -dir migrations $(MIGRATE_DATABASE_DRIVER) $(MIGRATE_DATABASE_URL) reset
+
+.PHONY: test_coverage
+test_coverage:
+	go test ./... -count=1 -cover -coverprofile cover.out
+	go tool cover -func cover.out
+
+.PHONY: test_coverage_html
+test_coverage_html:
+	go test ./... -coverprofile cover.out
+	go tool cover -html=cover.out
