@@ -16,18 +16,27 @@ func TestCart_ItemAdd(t *testing.T) {
 	const (
 		sku             = models.SKU(0)
 		userID          = models.UserID(1)
-		productName     = "airpods"
-		productPrice    = 100
+		productName1    = "airpods"
+		productPrice1   = 100
 		productCount    = 2
 		bigProductCount = 10
 		stockCount      = 3
+		productName2    = "macbook"
+		productPrice2   = 200
 	)
 
 	var cartItemSuccessCase = models.CartItem{
 		SKU:   sku,
-		Name:  productName,
+		Name:  productName1,
 		Count: productCount,
-		Price: productPrice,
+		Price: productPrice1,
+	}
+
+	var cartItemSecondSuccessCase = models.CartItem{
+		SKU:   sku,
+		Name:  productName2,
+		Count: productCount,
+		Price: productPrice2,
 	}
 
 	errNotFound := errors.New("not found")
@@ -40,7 +49,12 @@ func TestCart_ItemAdd(t *testing.T) {
 	productProviderSuccessMock := mock.NewProductProviderMock(t).
 		GetProductInfoMock.
 		Expect(ctx, sku).
-		Return(productName, productPrice, nil)
+		Return(productName1, productPrice1, nil)
+
+	productProviderSecondSuccessMock := mock.NewProductProviderMock(t).
+		GetProductInfoMock.
+		Expect(ctx, sku).
+		Return(productName2, productPrice2, nil)
 
 	stockProviderErrMock := mock.NewStockProviderMock(t).
 		GetStockMock.
@@ -55,6 +69,11 @@ func TestCart_ItemAdd(t *testing.T) {
 	itemAdderSuccessMock := mock.NewItemAdderMock(t).
 		AddItemMock.
 		Expect(ctx, userID, cartItemSuccessCase).
+		Return(nil)
+
+	itemAdderSecondSuccessMock := mock.NewItemAdderMock(t).
+		AddItemMock.
+		Expect(ctx, userID, cartItemSecondSuccessCase).
 		Return(nil)
 
 	tests := []struct {
@@ -119,6 +138,30 @@ func TestCart_ItemAdd(t *testing.T) {
 
 			errAssert: require.NoError,
 		},
+		{
+			name:                "success",
+			productProviderMock: productProviderSuccessMock,
+			stockProviderMock:   stockProviderSuccessMock,
+			itemAdderMock:       itemAdderSuccessMock,
+
+			userID: userID,
+			sku:    sku,
+			count:  productCount,
+
+			errAssert: require.NoError,
+		},
+		{
+			name:                "second success",
+			productProviderMock: productProviderSecondSuccessMock,
+			stockProviderMock:   stockProviderSuccessMock,
+			itemAdderMock:       itemAdderSecondSuccessMock,
+
+			userID: userID,
+			sku:    sku,
+			count:  productCount,
+
+			errAssert: require.NoError,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
@@ -146,10 +189,12 @@ func TestCart_ItemAdd(t *testing.T) {
 	t.Cleanup(func() {
 		productProviderErrMock.MinimockFinish()
 		productProviderSuccessMock.MinimockFinish()
+		productProviderSecondSuccessMock.MinimockFinish()
 
 		stockProviderErrMock.MinimockFinish()
 		stockProviderSuccessMock.MinimockFinish()
 
 		itemAdderSuccessMock.MinimockFinish()
+		itemAdderSecondSuccessMock.MinimockFinish()
 	})
 }
