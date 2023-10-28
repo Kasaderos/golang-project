@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"log"
 	"route256/loms/internal/models"
 )
 
@@ -13,12 +14,14 @@ type CancelService struct {
 	orderProvide      OrderProvider
 	reserveCanceller  ReserveCanceller
 	orderStatusSetter OrderStatusSetter
+	statusNotifier    StatusNotifier
 }
 
 type CancelDeps struct {
 	OrderProvider
 	ReserveCanceller
 	OrderStatusSetter
+	StatusNotifier
 }
 
 func NewCancelService(d CancelDeps) *CancelService {
@@ -26,18 +29,26 @@ func NewCancelService(d CancelDeps) *CancelService {
 		orderProvide:      d.OrderProvider,
 		reserveCanceller:  d.ReserveCanceller,
 		orderStatusSetter: d.OrderStatusSetter,
+		statusNotifier:    d.StatusNotifier,
 	}
 }
 
-func (usc *CancelService) CancelOrder(ctx context.Context, orderID models.OrderID) error {
-	order, err := usc.orderProvide.GetOrderByID(ctx, orderID)
+func (c *CancelService) CancelOrder(ctx context.Context, orderID models.OrderID) error {
+	order, err := c.orderProvide.GetOrderByID(ctx, orderID)
 	if err != nil {
 		return err
 	}
 
-	if err := usc.reserveCanceller.ReserveCancel(ctx, order.Items); err != nil {
+	if err := c.reserveCanceller.ReserveCancel(ctx, order.Items); err != nil {
 		return err
 	}
 
-	return usc.orderStatusSetter.SetStatus(ctx, orderID, models.StatusCancelled)
+	go func() {
+		if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusCancelled); err != nil {
+			log.Println("notifier: %w", err)
+			// save somehow and then somehow notify
+		}
+	}()
+
+	return c.orderStatusSetter.SetStatus(ctx, orderID, models.StatusCancelled)
 }

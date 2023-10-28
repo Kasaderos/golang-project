@@ -5,8 +5,12 @@ package order
 
 import (
 	"context"
+	"log"
 	"route256/loms/internal/models"
+	"time"
 )
+
+const NotifyTimeout = time.Minute * 2
 
 type OrderCreator interface {
 	CreateOrder(ctx context.Context, order models.Order) (models.OrderID, error)
@@ -16,16 +20,22 @@ type StocksReserver interface {
 	ReserveStocks(ctx context.Context, items []models.ItemOrderInfo) error
 }
 
+type StatusNotifier interface {
+	NotifyOrderStatus(order models.OrderID, status models.Status) error
+}
+
 type CreateService struct {
 	orderCreator      OrderCreator
 	stocksReserver    StocksReserver
 	orderStatusSetter OrderStatusSetter
+	statusNotifier    StatusNotifier
 }
 
 type CreateDeps struct {
 	OrderCreator
 	StocksReserver
 	OrderStatusSetter
+	StatusNotifier
 }
 
 func NewCreateService(d CreateDeps) *CreateService {
@@ -36,7 +46,7 @@ func NewCreateService(d CreateDeps) *CreateService {
 	}
 }
 
-func (usc *CreateService) CreateOrder(
+func (c *CreateService) CreateOrder(
 	ctx context.Context,
 	userID models.UserID,
 	items []models.ItemOrderInfo,
@@ -47,13 +57,20 @@ func (usc *CreateService) CreateOrder(
 		Items:  items,
 	}
 
-	orderID, err := usc.orderCreator.CreateOrder(ctx, order)
+	orderID, err := c.orderCreator.CreateOrder(ctx, order)
 	if err != nil {
 		return models.OrderID(-1), err
 	}
 
-	if err := usc.stocksReserver.ReserveStocks(ctx, items); err != nil {
-		if err := usc.orderStatusSetter.SetStatus(
+	go func() {
+		if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusNew); err != nil {
+			log.Println("notifier: %w", err)
+			// save somehow and then somehow notify
+		}
+	}()
+
+	if err := c.stocksReserver.ReserveStocks(ctx, items); err != nil {
+		if err := c.orderStatusSetter.SetStatus(
 			ctx,
 			orderID,
 			models.StatusFailed,
@@ -63,7 +80,7 @@ func (usc *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	if err := usc.orderStatusSetter.SetStatus(
+	if err := c.orderStatusSetter.SetStatus(
 		ctx,
 		orderID,
 		models.StatusAwaitingPayment,
