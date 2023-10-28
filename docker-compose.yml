@@ -32,9 +32,9 @@ services:
       - kafka-broker-2
       - kafka-broker-3
 
-  notification:
-    image: notification
-    build: ./notification
+  notifications:
+    image: notifications
+    build: ./notifications
     environment:
       - ORDER_STATUSES_TOPIC=order-statuses-topic
       - ORDER_STATUSES_CONSUMER_GROUP_ID=consumer-group-id
