@@ -45,7 +45,7 @@ func TestWorkerPool(t *testing.T) {
 			})
 		}
 
-		wp.Wait()
+		_ = wp.Wait()
 
 		if sum != int64(tt.JobsNum) {
 			t.Errorf("expected %d, actual %d", tt.JobsNum, sum)
@@ -69,7 +69,7 @@ func TestWorkerPoolCancel(t *testing.T) {
 		return nil
 	})
 
-	wp.Wait()
+	_ = wp.Wait()
 
 	if sum != 0 {
 		t.Errorf("expected 0, actual %d", sum)

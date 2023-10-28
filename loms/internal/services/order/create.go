@@ -1,5 +1,8 @@
 package order
 
+//go:generate mkdir -p mock
+//go:generate minimock -o ./mock/ -s .go -g
+
 import (
 	"context"
 	"route256/loms/internal/models"
