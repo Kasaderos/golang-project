@@ -34,6 +34,7 @@ func initServices(
 		OrderProvider:     ordersRepo,
 		ReserveCanceller:  stocksRepo,
 		OrderStatusSetter: ordersRepo,
+		StatusNotifier:    notificationService,
 	})
 
 	orderInfoService := order.NewGetInfoService(ordersRepo)

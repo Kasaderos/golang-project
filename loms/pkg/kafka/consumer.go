@@ -24,7 +24,9 @@ func NewConsumer(brokers []string, opts ...Option) (*Consumer, error) {
 
 	// Применяем свои конфигурации
 	for _, opt := range opts {
-		opt.apply(config)
+		if err := opt.apply(config); err != nil {
+			return nil, err
+		}
 	}
 
 	consumer, err := sarama.NewConsumer(brokers, config)

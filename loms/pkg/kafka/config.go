@@ -6,7 +6,7 @@ import (
 	"github.com/Shopify/sarama"
 )
 
-func prepareProducerSaramaConfig(opts ...Option) *sarama.Config {
+func prepareProducerSaramaConfig(opts ...Option) (*sarama.Config, error) {
 	c := sarama.NewConfig()
 
 	// алгоритм выбора партиции
@@ -90,8 +90,10 @@ func prepareProducerSaramaConfig(opts ...Option) *sarama.Config {
 
 	// Применяем свои конфигурации
 	for _, opt := range opts {
-		opt.apply(c)
+		if err := opt.apply(c); err != nil {
+			return nil, err
+		}
 	}
 
-	return c
+	return c, nil
 }

@@ -6,7 +6,10 @@ import (
 )
 
 func NewSyncProducer(brokers []string, opts ...Option) (sarama.SyncProducer, error) {
-	config := prepareProducerSaramaConfig(opts...)
+	config, err := prepareProducerSaramaConfig(opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	syncProducer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {

@@ -8,7 +8,10 @@ import (
 )
 
 func NewAsyncProducer(brokers []string, opts ...Option) (sarama.AsyncProducer, error) {
-	config := prepareProducerSaramaConfig(opts...)
+	config, err := prepareProducerSaramaConfig(opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	asyncProducer, err := sarama.NewAsyncProducer(brokers, config)
 	if err != nil {

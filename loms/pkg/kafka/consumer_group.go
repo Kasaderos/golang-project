@@ -69,7 +69,9 @@ func NewConsumerGroup(brokers []string, groupID string, topics []string, consume
 
 	// Применяем свои конфигурации
 	for _, opt := range opts {
-		opt.apply(config)
+		if err := opt.apply(config); err != nil {
+			return nil, err
+		}
 	}
 
 	/*

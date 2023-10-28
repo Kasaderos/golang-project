@@ -55,12 +55,18 @@ func TestCancelService_CancelOrder(t *testing.T) {
 		Expect(ctx, order.ID, models.StatusCancelled).
 		Return(nil)
 
+	statusNotifierSuccessMock := mock.NewStatusNotifierMock(t).
+		NotifyOrderStatusMock.
+		Expect(order.ID, models.StatusCancelled).
+		Return(nil)
+
 	tests := []struct {
 		name string
 
 		orderProvide      OrderProvider
 		reserveCanceller  ReserveCanceller
 		orderStatusSetter OrderStatusSetter
+		statusNotifier    StatusNotifier
 
 		orderID models.OrderID
 
@@ -84,8 +90,10 @@ func TestCancelService_CancelOrder(t *testing.T) {
 			orderProvide:      orderProviderSuccessMock,
 			reserveCanceller:  reserveCancellerSuccessMock,
 			orderStatusSetter: orderStatusSetterCancelMock,
-			orderID:           order.ID,
-			errAssert:         require.NoError,
+			statusNotifier:    statusNotifierSuccessMock,
+
+			orderID:   order.ID,
+			errAssert: require.NoError,
 		},
 	}
 	for _, tt := range tests {
@@ -96,6 +104,7 @@ func TestCancelService_CancelOrder(t *testing.T) {
 				orderProvide:      tt.orderProvide,
 				reserveCanceller:  tt.reserveCanceller,
 				orderStatusSetter: tt.orderStatusSetter,
+				statusNotifier:    tt.statusNotifier,
 			}
 
 			err := usc.CancelOrder(ctx, tt.orderID)
@@ -109,5 +118,6 @@ func TestCancelService_CancelOrder(t *testing.T) {
 		orderProviderSuccessMock.MinimockFinish()
 		reserveCancellerSuccessMock.MinimockFinish()
 		orderStatusSetterCancelMock.MinimockFinish()
+		statusNotifierSuccessMock.MinimockFinish()
 	})
 }

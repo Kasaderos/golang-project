@@ -28,6 +28,17 @@ services:
       - DATABASE_DSN=postgresql://postgres:passwd@loms-pgbouncer:6432/postgres
     depends_on:
       - loms-pgbouncer
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+
+  notification:
+    image: notification
+    build: ./notification
+    environment:
+      - ORDER_STATUSES_TOPIC=order-statuses-topic
+      - ORDER_STATUSES_CONSUMER_GROUP_ID=consumer-group-id
+
 
   # databases
   loms-pgbouncer:
@@ -165,10 +176,3 @@ services:
       - 9094:8080
     environment:
       DYNAMIC_CONFIG_ENABLED: true
-
-
-  # notification:
-  #   image: notification
-  #   build: ./notification
-  #   ports:
-  #     - "8082:8082"

@@ -12,9 +12,9 @@ import (
 	"github.com/Shopify/sarama"
 )
 
-const (
-	topicName       = "order-statuses-topic"
-	consumerGroupID = "consumer-group-id"
+var (
+	topicName       = os.Getenv("ORDER_STATUSES_TOPIC")
+	consumerGroupID = os.Getenv("ORDER_STATUSES_CONSUMER_GROUP_ID")
 )
 
 var brokers = []string{
