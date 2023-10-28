@@ -11,6 +11,7 @@ import (
 	"route256/loms/internal/repository/postgres"
 	"sync"
 	"syscall"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -20,6 +21,8 @@ type App struct {
 }
 
 func (app *App) Run() error {
+	time.Sleep(time.Minute)
+
 	// Init global context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

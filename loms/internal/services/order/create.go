@@ -43,6 +43,7 @@ func NewCreateService(d CreateDeps) *CreateService {
 		orderCreator:      d.OrderCreator,
 		stocksReserver:    d.StocksReserver,
 		orderStatusSetter: d.OrderStatusSetter,
+		statusNotifier:    d.StatusNotifier,
 	}
 }
 

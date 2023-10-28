@@ -9,9 +9,9 @@ import (
 )
 
 var brokers = []string{
-	"127.0.0.1:9091",
-	"127.0.0.1:9092",
-	"127.0.0.1:9093",
+	"kafka-broker-1:9091",
+	"kafka-broker-2:9092",
+	"kafka-broker-3:9093",
 }
 
 const (
@@ -23,7 +23,7 @@ const (
 func initKafkaProducer() (sarama.SyncProducer, error) {
 	producer, err := kafka.NewSyncProducer(brokers,
 		kafka.WithIdempotent(),
-		kafka.WithRequiredAcks(sarama.WaitForLocal),
+		kafka.WithRequiredAcks(sarama.WaitForAll),
 		kafka.WithProducerPartitioner(sarama.NewRoundRobinPartitioner),
 		kafka.WithMaxOpenRequests(MaxOpenRequests),
 		kafka.WithMaxRetries(MaxRetries),

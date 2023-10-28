@@ -8,6 +8,7 @@ import (
 	"route256/loms/pkg/kafka"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/Shopify/sarama"
 )
@@ -24,6 +25,8 @@ var brokers = []string{
 }
 
 func main() {
+	time.Sleep(time.Minute)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
