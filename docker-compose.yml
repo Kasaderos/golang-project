@@ -23,6 +23,7 @@ services:
     ports:
       - "8083:8080"
     environment:
+      - WAIT_KAFKA=on # придумать как от этого избавиться
       - GRPC_ADDR=:8082
       - GRPC_GW_ADDR=:8080
       - DATABASE_DSN=postgresql://postgres:passwd@loms-pgbouncer:6432/postgres
@@ -37,6 +38,7 @@ services:
     image: notifications
     build: ./notifications
     environment:
+      - WAIT_KAFKA=on # придумать как от этого избавиться
       - ORDER_STATUSES_TOPIC=order-statuses-topic
       - ORDER_STATUSES_CONSUMER_GROUP_ID=consumer-group-id
 
@@ -134,7 +136,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_LISTNERS: LISTNER_INT://kafka-broker-1:29091,LISTENER_EXT://0.0.0.0:9091
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-1:29091,LISTENER_EXT://localhost:9091
+      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-1:29091,LISTENER_EXT://kafka-broker-1:9091
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTNER_INT:PLAINTEXT,LISTENER_EXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTNER_INT
       ZOOKEEPER: zookeeper:2181
@@ -150,7 +152,7 @@ services:
       KAFKA_BROKER_ID: 2
       KAFKA_LISTNERS: LISTNER_INT://kafka-broker-2:29092,LISTENER_EXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-2:29091,LISTENER_EXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-2:29091,LISTENER_EXT://kafka-broker-2:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTNER_INT:PLAINTEXT,LISTENER_EXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTNER_INT
       ZOOKEEPER: zookeeper:2181
@@ -166,7 +168,7 @@ services:
       KAFKA_BROKER_ID: 3
       KAFKA_LISTNERS: LISTNER_INT://kafka-broker-3:29093,LISTENER_EXT://0.0.0.0:9093
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-3:29093,LISTENER_EXT://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: LISTNER_INT://kafka-broker-3:29093,LISTENER_EXT://kafka-broker-3:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTNER_INT:PLAINTEXT,LISTENER_EXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTNER_INT
       ZOOKEEPER: zookeeper:2181

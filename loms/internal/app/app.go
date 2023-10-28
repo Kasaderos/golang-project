@@ -21,7 +21,12 @@ type App struct {
 }
 
 func (app *App) Run() error {
-	time.Sleep(time.Minute)
+	// todo
+	// autocreate kafka cluster
+	// заходим в кафка ui руками заполняем конфиг на все 2 мин
+	if os.Getenv("WAIT_KAFKA") == "on" {
+		time.Sleep(time.Minute * 2)
+	}
 
 	// Init global context
 	ctx, cancel := context.WithCancel(context.Background())

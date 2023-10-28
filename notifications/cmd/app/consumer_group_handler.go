@@ -40,7 +40,7 @@ func (h *ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 		select {
 		case message := <-claim.Messages():
 			log.Printf("Message claimed: value = %v, timestamp = %v, topic = %s",
-				message.Value,
+				string(message.Value),
 				message.Timestamp,
 				message.Topic,
 			)

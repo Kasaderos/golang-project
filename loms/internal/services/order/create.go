@@ -65,7 +65,7 @@ func (c *CreateService) CreateOrder(
 
 	go func() {
 		if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusNew); err != nil {
-			log.Println("notifier: %w", err)
+			log.Println("notifier:", err)
 			// save somehow and then somehow notify
 		}
 	}()

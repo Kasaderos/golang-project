@@ -19,13 +19,18 @@ var (
 )
 
 var brokers = []string{
-	"127.0.0.1:9091",
-	"127.0.0.1:9092",
-	"127.0.0.1:9093",
+	"kafka-broker-1:9091",
+	"kafka-broker-2:9092",
+	"kafka-broker-3:9093",
 }
 
 func main() {
-	time.Sleep(time.Minute)
+	// todo
+	// autocreate kafka cluster
+	// заходим в кафка ui руками заполняем конфиг на все 2 мин
+	if os.Getenv("WAIT_KAFKA") == "on" {
+		time.Sleep(time.Minute * 2)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
