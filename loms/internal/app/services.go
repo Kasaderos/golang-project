@@ -13,7 +13,7 @@ import (
 
 type Services struct {
 	Notification *notification.Service
-	API          *api.Services
+	API          *api.Deps
 }
 
 func initServices(
@@ -49,7 +49,7 @@ func initServices(
 
 	return &Services{
 		Notification: notificationService,
-		API: &api.Services{
+		API: &api.Deps{
 			OrderCreateService: orderCreateService,
 			OrderInfoService:   orderInfoService,
 			OrderPayService:    orderPayService,
