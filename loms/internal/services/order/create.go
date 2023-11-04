@@ -5,7 +5,6 @@ package order
 
 import (
 	"context"
-	"log"
 	"route256/loms/internal/models"
 	"time"
 )
@@ -21,7 +20,7 @@ type StocksReserver interface {
 }
 
 type StatusNotifier interface {
-	NotifyOrderStatus(order models.OrderID, status models.Status) error
+	NotifyOrderStatus(ctx context.Context, m models.OrderID, status models.Status) error
 }
 
 type CreateService struct {
@@ -63,12 +62,9 @@ func (c *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	go func() {
-		if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusNew); err != nil {
-			log.Println("notifier:", err)
-			// save somehow and then somehow notify
-		}
-	}()
+	if err := c.statusNotifier.NotifyOrderStatus(ctx, orderID, models.StatusNew); err != nil {
+		return models.OrderID(-1), err
+	}
 
 	if err := c.stocksReserver.ReserveStocks(ctx, items); err != nil {
 		if err := c.orderStatusSetter.SetStatus(

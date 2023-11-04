@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func initGRPCServer(services *api.Deps) (*grpc.Server, net.Listener, error) {
+func initGRPCServer(services *api.Services) (*grpc.Server, net.Listener, error) {
 	lis, err := net.Listen("tcp", os.Getenv("GRPC_ADDR"))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to listen: %v", err)

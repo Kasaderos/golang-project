@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	api "route256/loms/internal/api/loms"
 	"route256/loms/internal/repository/postgres"
 	"route256/loms/internal/services/notification"
@@ -10,11 +11,17 @@ import (
 	"github.com/Shopify/sarama"
 )
 
+type Services struct {
+	Notification *notification.Service
+	API          *api.Services
+}
+
 func initServices(
+	ctx context.Context,
 	ordersRepo *postgres.OrdersRepository,
 	stocksRepo *postgres.StocksRepository,
 	producer sarama.SyncProducer,
-) *api.Deps {
+) *Services {
 	notificationService := notification.NewService(producer)
 
 	orderCreateService := order.NewCreateService(order.CreateDeps{
@@ -40,11 +47,14 @@ func initServices(
 	orderInfoService := order.NewGetInfoService(ordersRepo)
 	stocksInfoService := stock.NewStocksService(stocksRepo)
 
-	return &api.Deps{
-		OrderCreateService: orderCreateService,
-		OrderInfoService:   orderInfoService,
-		OrderPayService:    orderPayService,
-		OrderCancelService: orderCancelService,
-		StockInfoService:   stocksInfoService,
+	return &Services{
+		Notification: notificationService,
+		API: &api.Services{
+			OrderCreateService: orderCreateService,
+			OrderInfoService:   orderInfoService,
+			OrderPayService:    orderPayService,
+			OrderCancelService: orderCancelService,
+			StockInfoService:   stocksInfoService,
+		},
 	}
 }

@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"log"
 	"route256/loms/internal/models"
 )
 
@@ -43,12 +42,9 @@ func (c *CancelService) CancelOrder(ctx context.Context, orderID models.OrderID)
 		return err
 	}
 
-	go func() {
-		if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusCancelled); err != nil {
-			log.Println("notifier: %w", err)
-			// save somehow and then somehow notify
-		}
-	}()
+	if err := c.statusNotifier.NotifyOrderStatus(ctx, orderID, models.StatusCancelled); err != nil {
+		return err
+	}
 
 	return c.orderStatusSetter.SetStatus(ctx, orderID, models.StatusCancelled)
 }
