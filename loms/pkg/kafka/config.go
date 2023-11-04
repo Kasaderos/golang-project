@@ -17,10 +17,10 @@ func prepareProducerSaramaConfig(opts ...Option) (*sarama.Config, error) {
 				- при cleanup.policy = compact останется только последнее сообщение по этому ключу
 		*/
 		// случайная партиция
-		c.Producer.Partitioner = sarama.NewRandomPartitioner
+		// c.Producer.Partitioner = sarama.NewRandomPartitioner
 
 		// по кругу
-		c.Producer.Partitioner = sarama.NewRoundRobinPartitioner
+		// c.Producer.Partitioner = sarama.NewRoundRobinPartitioner
 
 		// по ключу
 		c.Producer.Partitioner = sarama.NewHashPartitioner
@@ -29,9 +29,9 @@ func prepareProducerSaramaConfig(opts ...Option) (*sarama.Config, error) {
 	// acks параметр
 	{
 		// acks = 0 (none) - ничего не ждем
-		c.Producer.RequiredAcks = sarama.NoResponse
+		// c.Producer.RequiredAcks = sarama.NoResponse
 		// acks = 1 (one) - ждем успешной записи ТОЛЬКО на лидер партиции
-		c.Producer.RequiredAcks = sarama.WaitForLocal
+		// c.Producer.RequiredAcks = sarama.WaitForLocal
 		// acks = -1 (all) - ждем успешной записи на лидер партиции и всех in-sync реплик (настроено в кафка кластере)
 		c.Producer.RequiredAcks = sarama.WaitForAll
 	}
