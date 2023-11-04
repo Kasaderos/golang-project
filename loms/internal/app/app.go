@@ -11,7 +11,6 @@ import (
 	"route256/loms/internal/repository/postgres"
 	"sync"
 	"syscall"
-	"time"
 
 	"google.golang.org/grpc"
 )
@@ -21,13 +20,6 @@ type App struct {
 }
 
 func (app *App) Run() error {
-	// todo
-	// autocreate kafka cluster
-	// заходим в кафка ui руками заполняем конфиг на все 2 мин
-	if os.Getenv("WAIT_KAFKA") == "on" {
-		time.Sleep(time.Minute * 2)
-	}
-
 	// Init global context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

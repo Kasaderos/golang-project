@@ -24,7 +24,7 @@ func initKafkaProducer() (sarama.SyncProducer, error) {
 	producer, err := kafka.NewSyncProducer(brokers,
 		kafka.WithIdempotent(),
 		kafka.WithRequiredAcks(sarama.WaitForAll),
-		kafka.WithProducerPartitioner(sarama.NewRoundRobinPartitioner),
+		kafka.WithProducerPartitioner(sarama.NewHashPartitioner),
 		kafka.WithMaxOpenRequests(MaxOpenRequests),
 		kafka.WithMaxRetries(MaxRetries),
 		kafka.WithRetryBackoff(RetryBackoff),

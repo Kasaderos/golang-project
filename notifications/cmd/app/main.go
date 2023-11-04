@@ -8,7 +8,6 @@ import (
 	"route256/loms/pkg/kafka"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/Shopify/sarama"
 )
@@ -25,13 +24,6 @@ var brokers = []string{
 }
 
 func main() {
-	// todo
-	// autocreate kafka cluster
-	// заходим в кафка ui руками заполняем конфиг на все 2 мин
-	if os.Getenv("WAIT_KAFKA") == "on" {
-		time.Sleep(time.Minute * 2)
-	}
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
