@@ -63,14 +63,9 @@ func (c *Service) NotifyOrderStatusBackground(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case m := <-c.messages:
-			msg, err := kafka.BuildMessage(orderStatusesTopic, m.OrderID, m.bytes)
-			if err != nil {
-				log.Println("notifications: build message:", err)
-				c.retrySend(m)
-				continue
-			}
+			msg := kafka.BuildMessage(orderStatusesTopic, m.OrderID, m.bytes)
 
-			_, _, err = c.producer.SendMessage(msg)
+			_, _, err := c.producer.SendMessage(msg)
 			if err != nil {
 				log.Println("notifications: send message:", err)
 				c.retrySend(m)
