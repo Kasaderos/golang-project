@@ -57,7 +57,7 @@ func TestCancelService_CancelOrder(t *testing.T) {
 
 	statusNotifierSuccessMock := mock.NewStatusNotifierMock(t).
 		NotifyOrderStatusMock.
-		Expect(ctx, order.ID, models.StatusCancelled).
+		Expect(order.ID, models.StatusCancelled).
 		Return(nil)
 
 	tests := []struct {

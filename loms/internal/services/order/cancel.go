@@ -42,7 +42,7 @@ func (c *CancelService) CancelOrder(ctx context.Context, orderID models.OrderID)
 		return err
 	}
 
-	if err := c.statusNotifier.NotifyOrderStatus(ctx, orderID, models.StatusCancelled); err != nil {
+	if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusCancelled); err != nil {
 		return err
 	}
 

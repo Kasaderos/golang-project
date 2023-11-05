@@ -42,9 +42,7 @@ func (app *App) Run() error {
 	stocksRepo := postgres.NewStocksRepostiory(dbpool)
 
 	// Services
-	services := initServices(ctx, ordersRepo, stocksRepo, kafkaProducer)
-	app.wg.Add(1)
-	go services.Notification.NotifyOrderStatusBackground(ctx)
+	services := initServices(ordersRepo, stocksRepo, kafkaProducer)
 
 	// Controller
 	grpcServer, lis, err := initGRPCServer(services.API)

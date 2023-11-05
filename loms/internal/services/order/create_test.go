@@ -63,7 +63,7 @@ func TestCreateService_CreateOrder(t *testing.T) {
 
 	statusNotifierSuccessMock := mock.NewStatusNotifierMock(t).
 		NotifyOrderStatusMock.
-		Expect(ctx, order.ID, models.StatusNew).
+		Expect(order.ID, models.StatusNew).
 		Return(nil)
 
 	tests := []struct {

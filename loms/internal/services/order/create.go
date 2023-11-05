@@ -20,7 +20,7 @@ type StocksReserver interface {
 }
 
 type StatusNotifier interface {
-	NotifyOrderStatus(ctx context.Context, m models.OrderID, status models.Status) error
+	NotifyOrderStatus(m models.OrderID, status models.Status) error
 }
 
 type CreateService struct {
@@ -62,7 +62,7 @@ func (c *CreateService) CreateOrder(
 		return models.OrderID(-1), err
 	}
 
-	if err := c.statusNotifier.NotifyOrderStatus(ctx, orderID, models.StatusNew); err != nil {
+	if err := c.statusNotifier.NotifyOrderStatus(orderID, models.StatusNew); err != nil {
 		return models.OrderID(-1), err
 	}
 

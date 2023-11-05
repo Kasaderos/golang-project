@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	api "route256/loms/internal/api/loms"
 	"route256/loms/internal/repository/postgres"
 	"route256/loms/internal/services/notification"
@@ -17,7 +16,6 @@ type Services struct {
 }
 
 func initServices(
-	ctx context.Context,
 	ordersRepo *postgres.OrdersRepository,
 	stocksRepo *postgres.StocksRepository,
 	producer sarama.SyncProducer,
