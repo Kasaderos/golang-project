@@ -61,12 +61,18 @@ func TestCreateService_CreateOrder(t *testing.T) {
 		Expect(ctx, order.ID, models.StatusAwaitingPayment).
 		Return(nil)
 
+	statusNotifierSuccessMock := mock.NewStatusNotifierMock(t).
+		NotifyOrderStatusMock.
+		Expect(order.ID, models.StatusNew).
+		Return(nil)
+
 	tests := []struct {
 		name string
 
 		orderCreator      OrderCreator
 		stocksReserver    StocksReserver
 		orderStatusSetter OrderStatusSetter
+		statusNotifier    StatusNotifier
 
 		userID      models.UserID
 		items       []models.ItemOrderInfo
@@ -87,6 +93,7 @@ func TestCreateService_CreateOrder(t *testing.T) {
 			orderCreator:      orderCreatorSuccessMock,
 			stocksReserver:    stockReserverErrMock,
 			orderStatusSetter: orderStatusSetterFailMock,
+			statusNotifier:    statusNotifierSuccessMock,
 			userID:            order.UserID,
 			items:             order.Items,
 			wantOrderID:       models.OrderID(-1),
@@ -97,6 +104,7 @@ func TestCreateService_CreateOrder(t *testing.T) {
 			orderCreator:      orderCreatorSuccessMock,
 			stocksReserver:    stockReserverSuccessMock,
 			orderStatusSetter: orderStatusSetterSuccessMock,
+			statusNotifier:    statusNotifierSuccessMock,
 			userID:            order.UserID,
 			items:             order.Items,
 			wantOrderID:       order.ID,
@@ -112,6 +120,7 @@ func TestCreateService_CreateOrder(t *testing.T) {
 				orderCreator:      tt.orderCreator,
 				stocksReserver:    tt.stocksReserver,
 				orderStatusSetter: tt.orderStatusSetter,
+				statusNotifier:    tt.statusNotifier,
 			}
 			got, err := usc.CreateOrder(ctx, tt.userID, tt.items)
 
@@ -125,5 +134,6 @@ func TestCreateService_CreateOrder(t *testing.T) {
 		stockReserverErrMock.MinimockFinish()
 		stockReserverSuccessMock.MinimockFinish()
 		orderStatusSetterFailMock.MinimockFinish()
+		statusNotifierSuccessMock.MinimockFinish()
 	})
 }

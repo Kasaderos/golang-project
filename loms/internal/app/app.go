@@ -30,15 +30,22 @@ func (app *App) Run() error {
 	}
 	defer dbpool.Close()
 
+	kafkaProducer, err := initKafkaProducer()
+	if err != nil {
+		return err
+	}
+
+	defer kafkaProducer.Close() // Не забываем освобождать ресурсы :)
+
 	// Repository
 	ordersRepo := postgres.NewOrdersRepostiory(dbpool)
 	stocksRepo := postgres.NewStocksRepostiory(dbpool)
 
 	// Services
-	services := initServices(ordersRepo, stocksRepo)
+	services := initServices(ordersRepo, stocksRepo, kafkaProducer)
 
 	// Controller
-	grpcServer, lis, err := initGRPCServer(services)
+	grpcServer, lis, err := initGRPCServer(services.API)
 	if err != nil {
 		return err
 	}

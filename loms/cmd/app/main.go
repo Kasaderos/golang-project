@@ -8,6 +8,6 @@ import (
 func main() {
 	app := new(app.App)
 	if err := app.Run(); err != nil {
-		log.Printf("service exited with err: %v", err)
+		log.Printf("[ERROR] service exited with err: %v", err)
 	}
 }

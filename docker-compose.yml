@@ -27,7 +27,21 @@ services:
       - GRPC_GW_ADDR=:8080
       - DATABASE_DSN=postgresql://postgres:passwd@loms-pgbouncer:6432/postgres
     depends_on:
-      - loms-pgbouncer
+      loms-pgbouncer:
+        condition: service_started
+      init-kafka:
+        condition: service_completed_successfully
+
+  notifications:
+    image: notifications
+    build: ./notifications
+    environment:
+      - ORDER_STATUSES_TOPIC=order-statuses-topic
+      - ORDER_STATUSES_CONSUMER_GROUP_ID=consumer-group-id
+    depends_on:
+      init-kafka:
+        condition: service_completed_successfully
+
 
   # databases
   loms-pgbouncer:
@@ -92,8 +106,88 @@ services:
     volumes:
       - ./.docker/postgresql/cart-data:/var/lib/postgresql/data
 
-  # notification:
-  #   image: notification
-  #   build: ./notification
-  #   ports:
-  #     - "8082:8082"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181 
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:6.1.1
+    depends_on:
+      - zookeeper
+    ports:
+      - '9091:9091'
+    expose:
+      - '29091'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:29091,PLAINTEXT_HOST://kafka-broker-1:9091
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_MIN_INSYNC_REPLICAS: '1'
+  kafka-broker-2:
+    image: confluentinc/cp-kafka:6.1.1
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+    expose:
+      - '29092'
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:29092,PLAINTEXT_HOST://kafka-broker-2:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_MIN_INSYNC_REPLICAS: '1'
+  kafka-broker-3:
+    image: confluentinc/cp-kafka:6.1.1
+    depends_on:
+      - zookeeper
+    ports:
+      - '9093:9093'
+    expose:
+      - '29093'
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:29093,PLAINTEXT_HOST://kafka-broker-3:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_MIN_INSYNC_REPLICAS: '1'
+  init-kafka:
+    image: confluentinc/cp-kafka:6.1.1
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka-broker-1:29091 --list
+      kafka-topics --bootstrap-server kafka-broker-2:29092 --list
+      kafka-topics --bootstrap-server kafka-broker-3:29093 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka-broker-1:29091 --create --if-not-exists --topic order_statuses_topic --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka-broker-2:29092 --create --if-not-exists --topic order_statuses_topic --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka-broker-3:29093 --create --if-not-exists --topic order_statuses_topic --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka-broker-1:29091 --list
+      kafka-topics --bootstrap-server kafka-broker-2:29092 --list
+      kafka-topics --bootstrap-server kafka-broker-3:29093 --list
+      "
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:master
+    ports:
+      - 9094:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true 
